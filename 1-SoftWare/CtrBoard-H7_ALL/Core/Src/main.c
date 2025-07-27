@@ -62,6 +62,9 @@ int32_t OSPI_Status ; 		 //����־λ
 
 uint8_t  W25Qxx_WriteBuffer[W25Qxx_NumByteToTest];		//	д��������
 uint8_t  W25Qxx_ReadBuffer[W25Qxx_NumByteToTest];		//	����������
+float scnt = 0.0f;
+float scnt1 = 0.0f;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -247,61 +250,45 @@ int main(void)
 //    OSPI_W25Qxx_Test();     // Flash��д����
     can_bsp_init();
     HAL_Delay(3000);
-    Init_Cyber(&Clutch_Cyber, 0x02);   //��ʼ���������
+    Init_Cyber(&X_Cyber, 0x01);   //��ʼ���������
     HAL_Delay(20);
-    Stop_Cyber(&Clutch_Cyber, 1);
+    Init_Cyber(&Y_Cyber, 0x02);   //��ʼ���������
     HAL_Delay(20);
-    Set_Cyber_Mode(&Clutch_Cyber,1);    //���õ��ģʽ
+    Stop_Cyber(&X_Cyber, 1);
     HAL_Delay(20);
-    Set_Cyber_ZeroPos(&Clutch_Cyber);
+    Stop_Cyber(&Y_Cyber, 1);
     HAL_Delay(20);
-    Start_Cyber(&Clutch_Cyber);     
+    Set_Cyber_Mode(&X_Cyber,1);    //���õ��ģʽ
     HAL_Delay(20);
-    Set_Cyber_Pos(&Clutch_Cyber,0) ;   //���õ��λ��
+    Set_Cyber_Mode(&Y_Cyber,1);    //���õ��ģʽ
     HAL_Delay(20);
-    Set_Cyber_limitSp(&Clutch_Cyber,1) ;
+    Set_Cyber_ZeroPos(&X_Cyber);
     HAL_Delay(20);
-    Set_Cyber_limitTor(&Clutch_Cyber,0.5) ;
-        Set_Cyber_Pos(&Clutch_Cyber,0) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,10) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,20) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,30) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,40) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,50) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,60) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,70) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,80) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,90) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,70) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,50) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,30) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,20) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,10) ;   //���õ��λ��
-    HAL_Delay(500);
-    Set_Cyber_Pos(&Clutch_Cyber,0) ;   //���õ��λ��
-    HAL_Delay(500);
+    Set_Cyber_ZeroPos(&Y_Cyber);
+    HAL_Delay(20);
+    Start_Cyber(&X_Cyber);     
+    HAL_Delay(20);
+    Start_Cyber(&Y_Cyber);     
+    HAL_Delay(20);
+    Set_Cyber_Pos(&X_Cyber,0) ;   //���õ��λ��
+    HAL_Delay(20);
+    Set_Cyber_Pos(&Y_Cyber,0) ;   //���õ��λ��
+    HAL_Delay(20);
+    Set_Cyber_limitSp(&X_Cyber,1) ;
+    HAL_Delay(20);
+    Set_Cyber_limitSp(&Y_Cyber,1) ;
+    HAL_Delay(20);
+    Set_Cyber_limitTor(&X_Cyber,0.1) ;
+    HAL_Delay(20);
+    Set_Cyber_limitTor(&Y_Cyber,0.1) ;
 
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
-  MX_FREERTOS_Init();
+//  MX_FREERTOS_Init();
 
   /* Start scheduler */
-  osKernelStart();
+//  osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
@@ -309,7 +296,15 @@ int main(void)
   while (1)
   {
 	  //vofa_start();
-
+    vofa_CyberGear(&X_Cyber,&Y_Cyber);
+	scnt += 0.5f;
+    scnt1 = scnt1-0.3f;
+	if(scnt >= 160.0f)scnt = 0.0f;
+	if(scnt1 <= -80.0f) scnt1 = 0.0f;
+    Set_Cyber_Pos(&Y_Cyber,scnt) ;
+    HAL_Delay(20);
+    Set_Cyber_Pos(&X_Cyber,scnt1) ;
+    HAL_Delay(1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

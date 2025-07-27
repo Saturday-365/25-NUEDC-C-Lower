@@ -3,7 +3,7 @@
 #include "usbd_core.h"
 #include "usbd_cdc.h"
 #include "math.h"
-//#include "usart.h"
+#include "usart.h"
 
 #define MAX_BUFFER_SIZE 1024
 uint8_t send_buf[MAX_BUFFER_SIZE];
@@ -35,7 +35,9 @@ void vofa_start(void)
 void vofa_transmit(uint8_t* buf, uint16_t len)
 {
 //	HAL_UART_Transmit(&huart3, (uint8_t *)buf, len, 0xFFFF);
-	CDC_Transmit_HS((uint8_t *)buf, len);
+//	CDC_Transmit_HS((uint8_t *)buf, len);
+	HAL_UART_Transmit(&huart7, (uint8_t *)buf, len, 0xFFFF);
+
 }
 /**
 ***********************************************************************

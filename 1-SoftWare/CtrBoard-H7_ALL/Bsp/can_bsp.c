@@ -43,6 +43,12 @@ void can_filter_init(void)
 		Error_Handler();
 	}
 	HAL_FDCAN_ConfigFifoWatermark(&hfdcan1, FDCAN_CFG_RX_FIFO0, 1);
+//	if(HAL_FDCAN_ConfigFilter(&hfdcan2,&fdcan_filter)!=HAL_OK) 		 //滤波器初始化
+//	{
+//		Error_Handler();
+//	}
+//	HAL_FDCAN_ConfigFifoWatermark(&hfdcan2, FDCAN_CFG_RX_FIFO0, 1);
+
 }
 /**
 ************************************************************************
@@ -125,20 +131,19 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 * @details:    	供用户调用的接收弱函数
 ************************************************************************
 **/
-extern FDCAN_RxHeaderTypeDef rxMsg;//???????
+extern FDCAN_RxHeaderTypeDef rxMsg;
 
 uint8_t rx_data1[8] = {0};
 void fdcan1_rx_callback(void)
 {
 	fdcanx_receive(&hfdcan1, rx_data1);
-    Motor_Data_Handler(&Clutch_Cyber,rx_data1,rxMsg.Identifier);
-//    HAL_GPIO_WritePin((GPIO_TypeDef *)LED_GPIO_Port, (uint16_t)LED_Pin, (GPIO_PinState)0);  //????????
-
+    Motor_Data_Handler(&X_Cyber,rx_data1,rxMsg.Identifier);
 }
 uint8_t rx_data2[8] = {0};
 void fdcan2_rx_callback(void)
 {
 	fdcanx_receive(&hfdcan2, rx_data2);
+    Motor_Data_Handler(&Y_Cyber,rx_data2,rxMsg.Identifier);
 }
 uint8_t rx_data3[8] = {0};
 void fdcan3_rx_callback(void)

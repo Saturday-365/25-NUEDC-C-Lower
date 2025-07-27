@@ -4,8 +4,9 @@
 #include "fdcan.h"
 #include "can_bsp.h"
 #include "Cybergear_Control.h"
-Cyber_Motor Clutch_Cyber;//小米电机定义
-//Cyber_Motor Shift_Cyber;//小米电机定义
+#include "vofa.h"
+Cyber_Motor X_Cyber;//小米电机定义
+Cyber_Motor Y_Cyber;//小米电机定义
 
 FDCAN_RxHeaderTypeDef rxMsg;//发送接收结构体
 FDCAN_TxHeaderTypeDef txMsg;//发送配置结构体
@@ -48,7 +49,9 @@ void Check_cyber(uint8_t ID)
 {
     uint8_t tx_data[8] = {0};
     txMsg.Identifier = Communication_Type_GetID<<24|Master_CAN_ID<<8|ID;//扩展帧清零
-    can1_txd();
+    if (ID==0x01)can1_txd();
+    else if (ID==0x02)can2_txd();
+
 }
 
 /**
@@ -78,7 +81,9 @@ void Cyber_ControlMode(Cyber_Motor *Motor,float tor, float vel_rads, float pos_d
     tx_data[7]=float_to_uint(kd,KD_MIN,KD_MAX,16); 
     
     txMsg.Identifier = Communication_Type_MotionControl<<24|float_to_uint(tor,T_MIN,T_MAX,16)<<8|Motor->CAN_ID;//装填扩展帧数据
-    can1_txd();
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
+
 }
 
 /**
@@ -90,7 +95,8 @@ void request_motor_feedback(Cyber_Motor *Motor)
 {
     uint8_t tx_data[8]={0};
 	txMsg.Identifier = Communication_Type_MotorRequest<<24|Master_CAN_ID<<8|Motor->CAN_ID;
-    can1_txd();
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
 }
 
 
@@ -102,7 +108,8 @@ void Start_Cyber(Cyber_Motor *Motor)
 {
     uint8_t tx_data[8] = {0}; 
     txMsg.Identifier = Communication_Type_MotorEnable<<24|Master_CAN_ID<<8|Motor->CAN_ID;
-    can1_txd();
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
 }
  
 /**
@@ -114,7 +121,8 @@ void Stop_Cyber(Cyber_Motor *Motor,uint8_t clear_error)
 	uint8_t tx_data[8]={0};
 	tx_data[0]=clear_error;//清除错误位设置 clear_error=1时清除故障
 	txMsg.Identifier = Communication_Type_MotorStop<<24|Master_CAN_ID<<8|Motor->CAN_ID;
-    can1_txd();
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
 }
 
 /**
@@ -126,7 +134,8 @@ void Set_Cyber_ZeroPos(Cyber_Motor *Motor)
     uint8_t tx_data[8]={0};
     tx_data[0]=1;
     txMsg.Identifier = Communication_Type_SetPosZero<<24|Master_CAN_ID<<8|Motor->CAN_ID;
-    can1_txd();
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
 }
 
 /**
@@ -138,7 +147,8 @@ void set_CANID_cybergear(Cyber_Motor *Motor,uint8_t CAN_ID)
 	uint8_t tx_data[8]={0};
 	txMsg.Identifier = Communication_Type_CanID<<24|CAN_ID<<16|Master_CAN_ID<<8|Motor->CAN_ID;
     Motor->CAN_ID = CAN_ID;//将新的ID导入电机结构体
-    can1_txd();	
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
 }
 
 /**
@@ -155,7 +165,8 @@ void Read_Cyber_Parameter(Cyber_Motor *Motor,uint16_t Index)
 	txMsg.Identifier = Communication_Type_GetSingleParameter<<24|Master_CAN_ID<<8|Motor->CAN_ID;
 	tx_data[0]=Index;
 	tx_data[1]=Index>>8;
-	can1_txd();	
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
 }
 
 /**
@@ -179,7 +190,8 @@ void Set_Cyber_Parameter(Cyber_Motor *Motor,uint16_t Index,float Value,char Valu
         {
 		tx_data[4]=(uint8_t)Value;
 	}
-	can1_txd();	
+    if (Motor->CAN_ID==0x01)can1_txd();
+    else if (Motor->CAN_ID==0x02)can2_txd();
     HAL_Delay(1);
 }
  
@@ -461,3 +473,84 @@ int float_to_uint(float x, float x_min, float x_max, int bits)
   else if(x < x_min) x= x_min;
   return (int) ((x-offset)*((float)((1<<bits)-1))/span);
 }
+
+void vofa_CyberGear(Cyber_Motor *Motor1,Cyber_Motor *Motor2) 
+{
+	// Call the function to store the data in the buffer
+	vofa_send_data(0, Motor1->des_pos);
+	vofa_send_data(1, Motor1->pre_pos);
+	vofa_send_data(2, Motor2->des_pos);
+	vofa_send_data(3, Motor2->pre_pos);
+
+	// Call the function to send the frame tail
+	vofa_sendframetail();
+}
+
+//主函数测试代码
+//  /* USER CODE BEGIN 2 */
+////    OSPI_W25Qxx_Init();     // ï¿½ï¿½Ê¼ï¿½ï¿½OSPIï¿½ï¿½W25Q64
+////    
+////    OSPI_W25Qxx_Test();     // Flashï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
+//    can_bsp_init();
+//    HAL_Delay(3000);
+//    Init_Cyber(&X_Cyber, 0x01);   //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//    HAL_Delay(20);
+//    Init_Cyber(&Y_Cyber, 0x02);   //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//    HAL_Delay(20);
+//    Stop_Cyber(&X_Cyber, 1);
+//    HAL_Delay(20);
+//    Stop_Cyber(&Y_Cyber, 1);
+//    HAL_Delay(20);
+//    Set_Cyber_Mode(&X_Cyber,1);    //ï¿½ï¿½ï¿½Ãµï¿½ï¿½Ä£Ê½
+//    HAL_Delay(20);
+//    Set_Cyber_Mode(&Y_Cyber,1);    //ï¿½ï¿½ï¿½Ãµï¿½ï¿½Ä£Ê½
+//    HAL_Delay(20);
+//    Set_Cyber_ZeroPos(&X_Cyber);
+//    HAL_Delay(20);
+//    Set_Cyber_ZeroPos(&Y_Cyber);
+//    HAL_Delay(20);
+//    Start_Cyber(&X_Cyber);     
+//    HAL_Delay(20);
+//    Start_Cyber(&Y_Cyber);     
+//    HAL_Delay(20);
+//    Set_Cyber_Pos(&X_Cyber,0) ;   //ï¿½ï¿½ï¿½Ãµï¿½ï¿½Î»ï¿½ï¿½
+//    HAL_Delay(20);
+//    Set_Cyber_Pos(&Y_Cyber,0) ;   //ï¿½ï¿½ï¿½Ãµï¿½ï¿½Î»ï¿½ï¿½
+//    HAL_Delay(20);
+//    Set_Cyber_limitSp(&X_Cyber,1) ;
+//    HAL_Delay(20);
+//    Set_Cyber_limitSp(&Y_Cyber,1) ;
+//    HAL_Delay(20);
+//    Set_Cyber_limitTor(&X_Cyber,0.1) ;
+//    HAL_Delay(20);
+//    Set_Cyber_limitTor(&Y_Cyber,0.1) ;
+
+//  /* USER CODE END 2 */
+
+//  /* Call init function for freertos objects (in freertos.c) */
+////  MX_FREERTOS_Init();
+
+//  /* Start scheduler */
+////  osKernelStart();
+
+//  /* We should never get here as control is now taken by the scheduler */
+//  /* Infinite loop */
+//  /* USER CODE BEGIN WHILE */
+//  while (1)
+//  {
+//	  //vofa_start();
+//    vofa_CyberGear(&X_Cyber,&Y_Cyber);
+//	scnt += 0.5f;
+//    scnt1 = scnt1-0.3f;
+//	if(scnt >= 160.0f)scnt = 0.0f;
+//	if(scnt1 <= -80.0f) scnt1 = 0.0f;
+//    Set_Cyber_Pos(&Y_Cyber,scnt) ;
+//    HAL_Delay(20);
+//    Set_Cyber_Pos(&X_Cyber,scnt1) ;
+//    HAL_Delay(1);
+//    /* USER CODE END WHILE */
+
+//    /* USER CODE BEGIN 3 */
+//  }
+//  /* USER CODE END 3 */
+//}

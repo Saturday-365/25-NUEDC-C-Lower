@@ -51,3 +51,4 @@ ctrboard-h7_all\cybergear_control.o: ../Core/Inc/fdcan.h
 ctrboard-h7_all\cybergear_control.o: ../Bsp/inc/can_bsp.h
 ctrboard-h7_all\cybergear_control.o: ..\XMCyberGear_Libary\Cybergear_Control.h
 ctrboard-h7_all\cybergear_control.o: ..\XMCyberGear_Libary\xiaomi_driver.h
+ctrboard-h7_all\cybergear_control.o: ../vofa+/vofa.h

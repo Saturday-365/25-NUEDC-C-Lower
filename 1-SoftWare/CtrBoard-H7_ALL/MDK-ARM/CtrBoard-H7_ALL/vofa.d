@@ -58,3 +58,4 @@ ctrboard-h7_all\vofa.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\string.h
 ctrboard-h7_all\vofa.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h
 ctrboard-h7_all\vofa.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h
 ctrboard-h7_all\vofa.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
+ctrboard-h7_all\vofa.o: ../Core/Inc/usart.h
