@@ -106,8 +106,8 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  LCD_Init();
-  LCD_Clear(WHITE);
+//  LCD_Init();
+//  LCD_Clear(WHITE);
     Kalman_Init(&Curreny_Kalman,0.0001,0.01);
     ADC_I_Init(&Curreny_data,100);
     Curreny_data.Correct_parameters=(float)(1.0);//1.2545
@@ -122,37 +122,37 @@ int main(void)
   {      
 //	HMI_Send_EveryInfo(); 
     HMI_Send_EveryInfo();
-    JustFloat_4(a,b,c,d);
-	if(key_get_state(UP) == KEY_SHORT_PRESS_RELEASE)	//DOWN
-	{
-    a++;
-	key_clear_state(UP);
-	}
-	if(key_get_state(DOWN) == KEY_SHORT_PRESS_RELEASE) //LEFT
-	{
-    a--;
-	key_clear_state(DOWN);
-	}
-	if(key_get_state(LEFT) == KEY_SHORT_PRESS_RELEASE)  //PRESS
-	{
-    a+=100;
-	key_clear_state(LEFT);
-	}
-	if(key_get_state(RIGHT)== KEY_SHORT_PRESS_RELEASE)   //UP
-	{
-    b++;
-	key_clear_state(RIGHT);
-	}
-	if(key_get_state(PRESS) == KEY_SHORT_PRESS_RELEASE)	 //RIGHT
-	{
-    b--;
-	key_clear_state(PRESS);
-	}
-    if(key_get_state(BUTTN1) == KEY_SHORT_PRESS_RELEASE )	
-	{
-    c--;
-	key_clear_state(BUTTN1);
-    } 
+    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.max_value);
+//	if(key_get_state(UP) == KEY_SHORT_PRESS_RELEASE)	//DOWN
+//	{
+//    a++;
+//	key_clear_state(UP);
+//	}
+//	if(key_get_state(DOWN) == KEY_SHORT_PRESS_RELEASE) //LEFT
+//	{
+//    a--;
+//	key_clear_state(DOWN);
+//	}
+//	if(key_get_state(LEFT) == KEY_SHORT_PRESS_RELEASE)  //PRESS
+//	{
+//    a+=100;
+//	key_clear_state(LEFT);
+//	}
+//	if(key_get_state(RIGHT)== KEY_SHORT_PRESS_RELEASE)   //UP
+//	{
+//    b++;
+//	key_clear_state(RIGHT);
+//	}
+//	if(key_get_state(PRESS) == KEY_SHORT_PRESS_RELEASE)	 //RIGHT
+//	{
+//    b--;
+//	key_clear_state(PRESS);
+//	}
+//    if(key_get_state(BUTTN1) == KEY_SHORT_PRESS_RELEASE )	
+//	{
+//    c--;
+//	key_clear_state(BUTTN1);
+//    } 
       	
     
 //    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0);  
@@ -217,15 +217,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     if(htim == &htim2)  //
    {
    
-    Collect_CurrentData(&Curreny_data);
-   Info.Elecurrent=(uint16_t)(Curreny_data.current_value_filt*1000);
-   Info.Elecurrent_Avg=(uint16_t)(Curreny_data.avg_value*1000);
+   Collect_CurrentData(&Curreny_data);
+//   Info.current_rlt=(uint16_t)(Curreny_data.current_value_filt*1000);
+   Info.current_rlt=(uint16_t)(Curreny_data.current_value_filt*1000);
+   Info.current_avg=(uint16_t)(Curreny_data.avg_value*1000);
+   Info.power_rlt=Info.current_avg*5;
+   Info.power_max=Curreny_data.max_value*5000;
    }
      if(htim == &htim3)  //
    {
-        Info.Distance+=1;
-        key_scanner ();
-
+        Info.y_distance+=1;
+        Info.x_length+=1;
+        Info.square_num+=1;
+//        key_scanner ();
     }  
 
 }

@@ -1,4 +1,5 @@
 stm32f103_c8t6\hmi.o: ..\Sourse_Library\1_SA_Library\HMI.c
+stm32f103_c8t6\hmi.o: ..\Sourse_Library\1_SA_Library\HMI.h
 stm32f103_c8t6\hmi.o: ../Core/Inc/main.h
 stm32f103_c8t6\hmi.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 stm32f103_c8t6\hmi.o: ../Core/Inc/stm32f1xx_hal_conf.h
@@ -31,6 +32,5 @@ stm32f103_c8t6\hmi.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h
 stm32f103_c8t6\hmi.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 stm32f103_c8t6\hmi.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 stm32f103_c8t6\hmi.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
-stm32f103_c8t6\hmi.o: ..\Sourse_Library\1_SA_Library\SA_Usart.h
-stm32f103_c8t6\hmi.o: ..\Sourse_Library\1_SA_Library\HMI.h
 stm32f103_c8t6\hmi.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdio.h
+stm32f103_c8t6\hmi.o: ..\Sourse_Library\1_SA_Library\SA_Usart.h

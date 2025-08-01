@@ -1,26 +1,34 @@
 #ifndef __HMI_H
-#define	__HMI_H
+#define __HMI_H
 
 #include "main.h"
 #include <stdio.h>
-/* ½á¹¹ÌåÀàĞÍÉùÃ÷ */
+/* ç»“æ„ä½“ç±»å‹å£°æ˜ */
 typedef struct {
-    int Distance;     // Ä¿±êÎï¾àÀë£¨mm£©
-    int Length;       // ¼¸ºÎÍ¼ĞÎ³ß´ç£¨mm£©
-    int Elecurrent;   // ¹©µçµçÁ÷£¨mA£©
-    int Elecurrent_Avg;   // ¹©µçµçÁ÷£¨mA£©
-    int Length_Min;   // ×îĞ¡Õı·½ĞÎ±ß³¤£¨mm£©
-    int P_current;    // ÊµÊ±¹¦ºÄ£¨mW£©
-    int P_Max;        // ×î´ó¹¦ºÄ£¨mW£©
+  int y_distance;              // ç›®æ ‡ç‰©è·ç¦»ï¼ˆmmï¼‰
+  int x_length;                // å‡ ä½•å›¾å½¢å°ºå¯¸ï¼ˆè¾¹é•¿æˆ–è€…ç›´å¾„ï¼‰ï¼ˆmmï¼‰
+  int square_num;
+  int square_length_min;       // æœ€å°æ­£æ–¹å½¢è¾¹é•¿ï¼ˆmmï¼‰
+  int aim_square_num;          // ç›®æ ‡æ­£æ–¹å½¢ç¼–å·
+  int tar_square_num;          // æœ€å¤§æ­£æ–¹å½¢ç¼–å·
+
+  int current_rlt;        // ä¾›ç”µå®æ—¶ç”µæµï¼ˆmAï¼‰
+  int current_avg;             // ä¾›ç”µå¹³å‡ç”µæµï¼ˆmAï¼‰
+  int current_max;             // æœ€å¤§ç”µæµï¼ˆmWï¼‰
+
+  int power_rlt;          // å®æ—¶åŠŸè€—ï¼ˆmWï¼‰
+  int power_avg;               // å¹³å‡åŠŸè€—ï¼ˆmWï¼‰
+  int power_max;               // æœ€å¤§åŠŸè€—ï¼ˆmWï¼‰
+
 } Info_t;
 
-/* ÉùÃ÷È«¾Ö±äÁ¿£¨extern±íÊ¾±äÁ¿ÔÚÆäËûÎÄ¼şÖĞ¶¨Òå£© */
+/* å£°æ˜å…¨å±€å˜é‡ï¼ˆexternè¡¨ç¤ºå˜é‡åœ¨å…¶ä»–æ–‡ä»¶ä¸­å®šä¹‰ï¼‰ */
 extern Info_t Info;
 
 void HMI_Send_EveryInfo(void);
-void HMI_send_string(char* name, char* showdata);
-void HMI_send_number(char* name, int num);
-void HMI_send_float(char* name, float num);
-void HMI_VOFA(char* name, float num);
+void HMI_send_string(char *name, char *showdata);
+void HMI_send_number(char *name, int num);
+void HMI_send_float(char *name, float num);
+void HMI_VOFA(char *name, float num);
 
 #endif /* __USART1_H */

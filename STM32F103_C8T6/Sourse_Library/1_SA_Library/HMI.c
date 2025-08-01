@@ -1,92 +1,70 @@
-/**
-  ******************************************************************************
-  * @file    HMI.c
-  * @author  SuperLi
-  * @version V1.0
-  * @date    2025-07-30
-  * @brief   HMIÓ¦ÓÃº¯Êı½Ó¿Ú
-  ******************************************************************************
-  * @attention
-  * ÊµÑéÆ½Ì¨:Ò°»ğ  STM32 F407 ¿ª·¢°å  
-  ******************************************************************************
-  */
-	
-#include "main.h"                  // Device header
-#include "SA_Usart.h"
 #include "HMI.h"
-/*
-*/
+#include "SA_Usart.h"
+#include "main.h" // Device header
 
-///* µ¥Î»Îªmm */
-//struct Info_e
-//{
-//	int Distance;
-//	int Length;
-//	int Elecurrent;
-//	
-//	int Length_Min;
-//	int P_current;
-//	int P_Max;
-//		
-//}Info;
-/* µ¥Î»:mm */
 Info_t Info = {
-    .Distance 	= 10,
-    .Length 		= 50,
-    .Elecurrent = 30,
-    .Length_Min = 0,
-    .P_current 	= 0,
-    .P_Max 			= 0,
-    .Elecurrent_Avg=0
+               .y_distance = 0,
+               .x_length = 0,
+               .square_num  = 0,
+
+               .square_length_min = 0,
+               .aim_square_num = 0,
+               .tar_square_num = 0,
+
+               .current_rlt = 0,
+               .current_avg = 0,
+               .current_max = 0,
+
+               .power_rlt = 0,
+               .power_avg = 0,
+               .power_max = 0,
 };
 /**************************************************************************
-º¯Êı¼ò½é    ÏÔÊ¾ËùÓĞ²ÎÊı
-²ÎÊıËµÃ÷    ÎŞ
-·µ»Ø²ÎÊı    ÎŞ
-Ê¹ÓÃÊ¾Àı    HMI_Send_EveryInfo();
-±¸×¢ĞÅÏ¢    
-						D Ä¿±êÎï¾àÀë			-->		"Num_d.val"		-->		Info.Distance
-						X ¼¸ºÎÍ¼ĞÎ³ß´ç		-->		"Num_x.val"		-->		Info.Length
-						I ¹©µçµçÁ÷				-->		"Num_I.val"		-->		Info.Elecurrent
+å‡½æ•°ç®€ä»‹    æ˜¾ç¤ºæ‰€æœ‰å‚æ•°
+å‚æ•°è¯´æ˜    æ— 
+è¿”å›å‚æ•°    æ— 
+ä½¿ç”¨ç¤ºä¾‹    HMI_Send_EveryInfo();
+å¤‡æ³¨ä¿¡æ¯
+                                                D ç›®æ ‡ç‰©è·ç¦»
+-->		"Num_d.val"		-->		Info.Distance X
+å‡ ä½•å›¾å½¢å°ºå¯¸		-->		"Num_x.val"		-->
+Info.Length I ä¾›ç”µç”µæµ				-->		"Num_I.val"
+-->		Info.Elecurrent
 **************************************************************************/
-void HMI_Send_EveryInfo(void)
-{
-	/* D Ä¿±êÎï¾àÀë */
-	HMI_send_number("Num_d.val",Info.Distance);
-	/* X ¼¸ºÎÍ¼ĞÎ³ß´ç */
-	HMI_send_number("Num_x.val",Info.Length);
-	/* I ¹©µçµçÁ÷ */
-	HMI_send_number("Pre_I.val",Info.Elecurrent);
-    
-	HMI_send_number("Avg_I.val",Info.Elecurrent_Avg);
-    
- 	HMI_send_number("Pwr.val",Info.Elecurrent*5);
-   HMI_VOFA("vofa",Info.Elecurrent);
-
-
+void HMI_Send_EveryInfo(void) {
+  /* D ç›®æ ‡ç‰©è·ç¦» */
+  HMI_send_number("y_distance.val", Info.y_distance);
+  /* X å‡ ä½•å›¾å½¢å°ºå¯¸ */
+  HMI_send_number("x_length.val", Info.x_length);
+  /* N æ­£æ–¹å½¢ç¼–å· */
+  HMI_send_number("square_num.val", Info.square_num);
+  /* I å®æ—¶ç”µæµ */  
+  HMI_send_number("current_rlt.val", Info.current_rlt);
+  /* I å¹³å‡ç”µæµ */  
+  HMI_send_number("current_avg.val", Info.current_avg);
+  /* P å®æ—¶åŠŸç‡ */  
+  HMI_send_number("power_rlt.val", Info.power_rlt);
+  /* PM æœ€å¤§åŠŸç‡ */  
+  HMI_send_number("power_max.val", Info.power_max);
+  /* ç”µæµæ˜¾ç¤ºæ³¢å½¢ */ 
+  HMI_VOFA("vofa", Info.current_rlt/10);
 }
 
-void HMI_send_string(char* name, char* showdata)
-{
-	printf("%s=\"%s\"\xff\xff\xff", name, showdata);
+void HMI_send_string(char *name, char *showdata) {
+  printf("%s=\"%s\"\xff\xff\xff", name, showdata);
 }
-void HMI_send_number(char* name, int num)
-{
-	printf("%s=%d\xff\xff\xff", name, num);
+void HMI_send_number(char *name, int num) {
+  printf("%s=%d\xff\xff\xff", name, num);
 }
-void HMI_send_float(char* name, float num)
-{
-	printf("%s=%d\xff\xff\xff", name, (int)(num));
+void HMI_send_float(char *name, float num) {
+  printf("%s=%d\xff\xff\xff", name, (int)(num));
 }
-void HMI_VOFA(char* name, float num)
-{
-    printf("add %s.id,0,%d\xff\xff\xff",name, (int)(num));
+void HMI_VOFA(char *name, float num) {
+  printf("add %s.id,0,%d\xff\xff\xff", name, (int)(num));
 }
 
-void HMI_GOtoPage(char* name)
-{
-    printf("page %s\xff\xff\xff",name);
-
+void HMI_GOtoPage(char *name) { 
+    printf("page %s\xff\xff\xff", name); 
 }
 
 /*-----------------------------------------------------------------------
