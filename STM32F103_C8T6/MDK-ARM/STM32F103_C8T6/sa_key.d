@@ -31,3 +31,5 @@ stm32f103_c8t6\sa_key.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h
 stm32f103_c8t6\sa_key.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 stm32f103_c8t6\sa_key.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 stm32f103_c8t6\sa_key.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+stm32f103_c8t6\sa_key.o: ..\Sourse_Library\1_SA_Library\SA_Key.h
+stm32f103_c8t6\sa_key.o: ../Core/Inc/gpio.h

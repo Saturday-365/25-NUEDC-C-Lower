@@ -1,78 +1,91 @@
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//²âÊÔÓ²¼ş£ºµ¥Æ¬»úSTM32F407ZGT6,ÕıµãÔ­×ÓExplorer STM32F4¿ª·¢°å,Ö÷Æµ168MHZ£¬¾§Õñ12MHZ
-//QDtech-TFTÒº¾§Çı¶¯ for STM32 IOÄ£Äâ
-//xiao·ë@ShenZhen QDtech co.,LTD
-//¹«Ë¾ÍøÕ¾:www.qdtft.com
-//ÌÔ±¦ÍøÕ¾£ºhttp://qdtech.taobao.com
-//wiki¼¼ÊõÍøÕ¾£ºhttp://www.lcdwiki.com
-//ÎÒË¾Ìá¹©¼¼ÊõÖ§³Ö£¬ÈÎºÎ¼¼ÊõÎÊÌâ»¶Ó­ËæÊ±½»Á÷Ñ§Ï°
-//¹Ì»°(´«Õæ) :+86 0755-23594567 
-//ÊÖ»ú:15989313508£¨·ë¹¤£© 
-//ÓÊÏä:lcdwiki01@gmail.com    support@lcdwiki.com    goodtft@163.com 
-//¼¼ÊõÖ§³ÖQQ:3002773612  3002778157
-//¼¼Êõ½»Á÷QQÈº:324828016
-//´´½¨ÈÕÆÚ:2018/08/22
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ÉîÛÚÊĞÈ«¶¯µç×Ó¼¼ÊõÓĞÏŞ¹«Ë¾ 2018-2028
-//All rights reserved
+//////////////////////////////////////////////////////////////////////////////////
+// æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+// æµ‹è¯•ç¡¬ä»¶ï¼šå•ç‰‡æœºSTM32F407ZGT6,æ­£ç‚¹åŸå­Explorer
+// STM32F4å¼€å‘æ¿,ä¸»é¢‘168MHZï¼Œæ™¶æŒ¯12MHZ QDtech-TFTæ¶²æ™¶é©±åŠ¨ for STM32 IOæ¨¡æ‹Ÿ
+// xiaoå†¯@ShenZhen QDtech co.,LTD
+// å…¬å¸ç½‘ç«™:www.qdtft.com
+// æ·˜å®ç½‘ç«™ï¼šhttp://qdtech.taobao.com
+// wikiæŠ€æœ¯ç½‘ç«™ï¼šhttp://www.lcdwiki.com
+// æˆ‘å¸æä¾›æŠ€æœ¯æ”¯æŒï¼Œä»»ä½•æŠ€æœ¯é—®é¢˜æ¬¢è¿éšæ—¶äº¤æµå­¦ä¹ 
+// å›ºè¯(ä¼ çœŸ) :+86 0755-23594567
+// æ‰‹æœº:15989313508ï¼ˆå†¯å·¥ï¼‰
+// é‚®ç®±:lcdwiki01@gmail.com    support@lcdwiki.com    goodtft@163.com
+// æŠ€æœ¯æ”¯æŒQQ:3002773612  3002778157
+// æŠ€æœ¯äº¤æµQQç¾¤:324828016
+// åˆ›å»ºæ—¥æœŸ:2018/08/22
+// ç‰ˆæœ¬ï¼šV1.0
+// ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+// Copyright(C) æ·±åœ³å¸‚å…¨åŠ¨ç”µå­æŠ€æœ¯æœ‰é™å…¬å¸ 2018-2028
+// All rights reserved
 /****************************************************************************************************
-//=========================================µçÔ´½ÓÏß================================================//
-//     LCDÄ£¿é                STM32µ¥Æ¬»ú
-//      VCC          ½Ó          3.3V         //µçÔ´
-//      GND          ½Ó          GND          //µçÔ´µØ
-//=======================================Òº¾§ÆÁÊı¾İÏß½ÓÏß==========================================//
-//±¾Ä£¿éÄ¬ÈÏÊı¾İ×ÜÏßÀàĞÍÎª4ÏßÖÆSPI×ÜÏß
-//     LCDÄ£¿é                STM32µ¥Æ¬»ú    
-//       SDA         ½Ó          PB5          //Òº¾§ÆÁSPI×ÜÏßÊı¾İĞ´ĞÅºÅ
-//=======================================Òº¾§ÆÁ¿ØÖÆÏß½ÓÏß==========================================//
-//     LCDÄ£¿é 					      STM32µ¥Æ¬»ú 
-//       BLK         ½Ó          PB13         //Òº¾§ÆÁ±³¹â¿ØÖÆĞÅºÅ£¬Èç¹û²»ĞèÒª¿ØÖÆ£¬½Ó3.3V
-//       SCL         ½Ó          PB3          //Òº¾§ÆÁSPI×ÜÏßÊ±ÖÓĞÅºÅ
-//       DC          ½Ó          PB14         //Òº¾§ÆÁÊı¾İ/ÃüÁî¿ØÖÆĞÅºÅ
-//       RES         ½Ó          PB12         //Òº¾§ÆÁ¸´Î»¿ØÖÆĞÅºÅ
-//       CS          ½Ó          PB15         //Òº¾§ÆÁÆ¬Ñ¡¿ØÖÆĞÅºÅ
-//=========================================´¥ÃşÆÁ´¥½ÓÏß=========================================//
-//Èç¹ûÄ£¿é²»´ø´¥Ãş¹¦ÄÜ»òÕß´øÓĞ´¥Ãş¹¦ÄÜ£¬µ«ÊÇ²»ĞèÒª´¥Ãş¹¦ÄÜ£¬Ôò²»ĞèÒª½øĞĞ´¥ÃşÆÁ½ÓÏß
-//	   LCDÄ£¿é                STM32µ¥Æ¬»ú 
-//      T_IRQ        ½Ó          PB1          //´¥ÃşÆÁ´¥ÃşÖĞ¶ÏĞÅºÅ
-//      T_DO         ½Ó          PB2          //´¥ÃşÆÁSPI×ÜÏß¶ÁĞÅºÅ
-//      T_DIN        ½Ó          PF11         //´¥ÃşÆÁSPI×ÜÏßĞ´ĞÅºÅ
-//      T_CS         ½Ó          PC5          //´¥ÃşÆÁÆ¬Ñ¡¿ØÖÆĞÅºÅ
-//      T_CLK        ½Ó          PB0          //´¥ÃşÆÁSPI×ÜÏßÊ±ÖÓĞÅºÅ
-**************************************************************************************************/	
- /* @attention
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-**************************************************************************************************/	
+//=========================================ç”µæºæ¥çº¿================================================//
+//     LCDæ¨¡å—                STM32å•ç‰‡æœº
+//      VCC          æ¥          3.3V         //ç”µæº
+//      GND          æ¥          GND          //ç”µæºåœ°
+//=======================================æ¶²æ™¶å±æ•°æ®çº¿æ¥çº¿==========================================//
+//æœ¬æ¨¡å—é»˜è®¤æ•°æ®æ€»çº¿ç±»å‹ä¸º4çº¿åˆ¶SPIæ€»çº¿
+//     LCDæ¨¡å—                STM32å•ç‰‡æœº
+//       SDA         æ¥          PB5          //æ¶²æ™¶å±SPIæ€»çº¿æ•°æ®å†™ä¿¡å·
+//=======================================æ¶²æ™¶å±æ§åˆ¶çº¿æ¥çº¿==========================================//
+//     LCDæ¨¡å— 					      STM32å•ç‰‡æœº
+//       BLK         æ¥          PB13
+//æ¶²æ™¶å±èƒŒå…‰æ§åˆ¶ä¿¡å·ï¼Œå¦‚æœä¸éœ€è¦æ§åˆ¶ï¼Œæ¥3.3V
+//       SCL         æ¥          PB3          //æ¶²æ™¶å±SPIæ€»çº¿æ—¶é’Ÿä¿¡å·
+//       DC          æ¥          PB14         //æ¶²æ™¶å±æ•°æ®/å‘½ä»¤æ§åˆ¶ä¿¡å·
+//       RES         æ¥          PB12         //æ¶²æ™¶å±å¤ä½æ§åˆ¶ä¿¡å·
+//       CS          æ¥          PB15         //æ¶²æ™¶å±ç‰‡é€‰æ§åˆ¶ä¿¡å·
+//=========================================è§¦æ‘¸å±è§¦æ¥çº¿=========================================//
+//å¦‚æœæ¨¡å—ä¸å¸¦è§¦æ‘¸åŠŸèƒ½æˆ–è€…å¸¦æœ‰è§¦æ‘¸åŠŸèƒ½ï¼Œä½†æ˜¯ä¸éœ€è¦è§¦æ‘¸åŠŸèƒ½ï¼Œåˆ™ä¸éœ€è¦è¿›è¡Œè§¦æ‘¸å±æ¥çº¿
+//	   LCDæ¨¡å—                STM32å•ç‰‡æœº
+//      T_IRQ        æ¥          PB1          //è§¦æ‘¸å±è§¦æ‘¸ä¸­æ–­ä¿¡å·
+//      T_DO         æ¥          PB2          //è§¦æ‘¸å±SPIæ€»çº¿è¯»ä¿¡å·
+//      T_DIN        æ¥          PF11         //è§¦æ‘¸å±SPIæ€»çº¿å†™ä¿¡å·
+//      T_CS         æ¥          PC5          //è§¦æ‘¸å±ç‰‡é€‰æ§åˆ¶ä¿¡å·
+//      T_CLK        æ¥          PB0          //è§¦æ‘¸å±SPIæ€»çº¿æ—¶é’Ÿä¿¡å·
+**************************************************************************************************/
+/* @attention
+ *
+ * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+ * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+ * TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
+ * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+ * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+ * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+ **************************************************************************************************/
 #ifndef __GUI_H__
 #define __GUI_H__
 #include "main.h"
 
-void GUI_DrawPoint(uint16_t x,uint16_t y,uint16_t color);
-void LCD_Fill(uint16_t sx,uint16_t sy,uint16_t ex,uint16_t ey,uint16_t color);
+void GUI_DrawPoint(uint16_t x, uint16_t y, uint16_t color);
+void LCD_Fill(uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey,
+              uint16_t color);
 void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
 void LCD_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
-void Draw_Circle(uint16_t x0,uint16_t y0,uint16_t fc,uint8_t r);
-void Draw_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2);
-void Fill_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2);
-void LCD_ShowChar(uint16_t x,uint16_t y,uint16_t fc, uint16_t bc, uint8_t num,uint8_t size,uint8_t mode);
-void LCD_ShowNum(uint16_t x,uint16_t y,uint32_t num,uint8_t len,uint8_t size);
-void LCD_Show2Num(uint16_t x,uint16_t y,uint16_t num,uint8_t len,uint8_t size,uint8_t mode);
-void LCD_ShowString(uint16_t x,uint16_t y,uint8_t size,uint8_t *p,uint8_t mode);
-void GUI_DrawFont16(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode);
-void GUI_DrawFont24(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode);
-void GUI_DrawFont32(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode);
-void Show_Str(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,uint8_t size,uint8_t mode);
-void Gui_Drawbmp16(uint16_t x,uint16_t y,const unsigned char *p); //ÏÔÊ¾40*40 QQÍ¼Æ¬
-void gui_circle(int xc, int yc,uint16_t c,int r, int fill);
-void Gui_StrCenter(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,uint8_t size,uint8_t mode);
+void Draw_Circle(uint16_t x0, uint16_t y0, uint16_t fc, uint8_t r);
+void Draw_Triangel(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                   uint16_t x2, uint16_t y2);
+void Fill_Triangel(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                   uint16_t x2, uint16_t y2);
+void LCD_ShowChar(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t num,
+                  uint8_t size, uint8_t mode);
+void LCD_ShowNum(uint16_t x, uint16_t y, uint32_t num, uint8_t len,
+                 uint8_t size);
+void LCD_Show2Num(uint16_t x, uint16_t y, uint16_t num, uint8_t len,
+                  uint8_t size, uint8_t mode);
+void LCD_ShowString(uint16_t x, uint16_t y, uint8_t size, uint8_t *p,
+                    uint8_t mode);
+void GUI_DrawFont16(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                    uint8_t *s, uint8_t mode);
+void GUI_DrawFont24(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                    uint8_t *s, uint8_t mode);
+void GUI_DrawFont32(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                    uint8_t *s, uint8_t mode);
+void Show_Str(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,
+              uint8_t size, uint8_t mode);
+void Gui_Drawbmp16(uint16_t x, uint16_t y,
+                   const unsigned char *p); // æ˜¾ç¤º40*40 QQå›¾ç‰‡
+void gui_circle(int xc, int yc, uint16_t c, int r, int fill);
+void Gui_StrCenter(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                   uint8_t *str, uint8_t size, uint8_t mode);
 void LCD_DrawFillRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
 #endif
-

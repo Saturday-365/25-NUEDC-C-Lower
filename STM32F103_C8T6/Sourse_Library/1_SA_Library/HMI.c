@@ -36,7 +36,8 @@ Info_t Info = {
     .Elecurrent = 30,
     .Length_Min = 0,
     .P_current 	= 0,
-    .P_Max 			= 0
+    .P_Max 			= 0,
+    .Elecurrent_Avg=0
 };
 /**************************************************************************
 函数简介    显示所有参数
@@ -55,8 +56,13 @@ void HMI_Send_EveryInfo(void)
 	/* X 几何图形尺寸 */
 	HMI_send_number("Num_x.val",Info.Length);
 	/* I 供电电流 */
-	HMI_send_number("Num_I.val",Info.Elecurrent);
+	HMI_send_number("Pre_I.val",Info.Elecurrent);
     
+	HMI_send_number("Avg_I.val",Info.Elecurrent_Avg);
+    
+ 	HMI_send_number("Pwr.val",Info.Elecurrent*5);
+   HMI_VOFA("vofa",Info.Elecurrent);
+
 
 }
 
@@ -75,6 +81,12 @@ void HMI_send_float(char* name, float num)
 void HMI_VOFA(char* name, float num)
 {
     printf("add %s.id,0,%d\xff\xff\xff",name, (int)(num));
+}
+
+void HMI_GOtoPage(char* name)
+{
+    printf("page %s\xff\xff\xff",name);
+
 }
 
 /*-----------------------------------------------------------------------

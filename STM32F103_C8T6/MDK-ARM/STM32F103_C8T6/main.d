@@ -46,6 +46,7 @@ stm32f103_c8t6\main.o: ../Sourse_Library/1_SA_Library/SA_uppercpu.h
 stm32f103_c8t6\main.o: ../Sourse_Library/1_SA_Library/SA_Usart.h
 stm32f103_c8t6\main.o: ../Sourse_Library/1_SA_Library/SA_Flash.h
 stm32f103_c8t6\main.o: ../Sourse_Library/1_SA_Library/SA_ADC.h
+stm32f103_c8t6\main.o: ../Sourse_Library/1_SA_Library/SA_Key.h
 stm32f103_c8t6\main.o: ../Sourse_Library/2_SA_peripheral/lcd.h
 stm32f103_c8t6\main.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdlib.h
 stm32f103_c8t6\main.o: ../Sourse_Library/2_SA_peripheral/GUI.h

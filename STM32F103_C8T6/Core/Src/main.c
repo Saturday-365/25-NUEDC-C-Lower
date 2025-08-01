@@ -54,7 +54,7 @@ float I_Data_Ratio=0;
 Data_I_TypeDef Curreny_data;
 Kalman_Typedef Curreny_Kalman;
 extern uint8_t window_index;
-
+float a,b,c,d;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,29 +104,57 @@ int main(void)
   MX_ADC1_Init();
   MX_SPI1_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-//  LCD_Init();
-//  LCD_Clear(WHITE);
-  Kalman_Init(&Curreny_Kalman,0.0001,0.01);
-  ADC_I_Init(&Curreny_data,100);
-  Curreny_data.Correct_parameters=(float)(1.0);//1.2545
+  LCD_Init();
+  LCD_Clear(WHITE);
+    Kalman_Init(&Curreny_Kalman,0.0001,0.01);
+    ADC_I_Init(&Curreny_data,100);
+    Curreny_data.Correct_parameters=(float)(1.0);//1.2545
+    HAL_TIM_Base_Start_IT(&htim2);
+    HAL_TIM_Base_Start_IT(&htim3);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {      
-//	HMI_Send_EveryInfo();
-    Collect_CurrentData(&Curreny_data);
-    Info.Elecurrent=(uint16_t)(Curreny_data.current_value_filt*1000);
-    Info.Length=(uint16_t)(Curreny_data.avg_value*1000);
+//	HMI_Send_EveryInfo(); 
     HMI_Send_EveryInfo();
-    HMI_VOFA("vofa",Info.Elecurrent);
-    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,window_index);
-//	HMI_send_string("t0.txt", "test_num");
-//	HMI_send_float("Num_d.val", 5);
-//    HMI_send_float("Num_I.val", 10);
-//    printf("%s=%d\xff\xff\xff", "Num_I.val",Info.Elecurrent);
+    JustFloat_4(a,b,c,d);
+	if(key_get_state(UP) == KEY_SHORT_PRESS_RELEASE)	//DOWN
+	{
+    a++;
+	key_clear_state(UP);
+	}
+	if(key_get_state(DOWN) == KEY_SHORT_PRESS_RELEASE) //LEFT
+	{
+    a--;
+	key_clear_state(DOWN);
+	}
+	if(key_get_state(LEFT) == KEY_SHORT_PRESS_RELEASE)  //PRESS
+	{
+    a+=100;
+	key_clear_state(LEFT);
+	}
+	if(key_get_state(RIGHT)== KEY_SHORT_PRESS_RELEASE)   //UP
+	{
+    b++;
+	key_clear_state(RIGHT);
+	}
+	if(key_get_state(PRESS) == KEY_SHORT_PRESS_RELEASE)	 //RIGHT
+	{
+    b--;
+	key_clear_state(PRESS);
+	}
+    if(key_get_state(BUTTN1) == KEY_SHORT_PRESS_RELEASE )	
+	{
+    c--;
+	key_clear_state(BUTTN1);
+    } 
+      	
+    
 //    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0);  
 //    HAL_Delay(200);
 //    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)1); 
@@ -188,8 +216,18 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     if(htim == &htim2)  //
    {
-   Info.Distance+=1;
+   
+    Collect_CurrentData(&Curreny_data);
+   Info.Elecurrent=(uint16_t)(Curreny_data.current_value_filt*1000);
+   Info.Elecurrent_Avg=(uint16_t)(Curreny_data.avg_value*1000);
    }
+     if(htim == &htim3)  //
+   {
+        Info.Distance+=1;
+        key_scanner ();
+
+    }  
+
 }
 
 /* USER CODE END 4 */

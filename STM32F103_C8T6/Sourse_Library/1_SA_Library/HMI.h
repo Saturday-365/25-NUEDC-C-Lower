@@ -8,6 +8,7 @@ typedef struct {
     int Distance;     // 目标物距离（mm）
     int Length;       // 几何图形尺寸（mm）
     int Elecurrent;   // 供电电流（mA）
+    int Elecurrent_Avg;   // 供电电流（mA）
     int Length_Min;   // 最小正方形边长（mm）
     int P_current;    // 实时功耗（mW）
     int P_Max;        // 最大功耗（mW）

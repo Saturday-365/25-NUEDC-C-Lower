@@ -40,6 +40,8 @@ stm32f103_c8t6\sa_flash.o: ..\Sourse_Library\1_SA_Library\SA_karman.h
 stm32f103_c8t6\sa_flash.o: ..\Sourse_Library\1_SA_Library\SA_uppercpu.h
 stm32f103_c8t6\sa_flash.o: ..\Sourse_Library\1_SA_Library\SA_Usart.h
 stm32f103_c8t6\sa_flash.o: ..\Sourse_Library\1_SA_Library\SA_ADC.h
+stm32f103_c8t6\sa_flash.o: ..\Sourse_Library\1_SA_Library\SA_Key.h
+stm32f103_c8t6\sa_flash.o: ../Core/Inc/gpio.h
 stm32f103_c8t6\sa_flash.o: ../Sourse_Library/2_SA_peripheral/lcd.h
 stm32f103_c8t6\sa_flash.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdlib.h
 stm32f103_c8t6\sa_flash.o: ../Sourse_Library/2_SA_peripheral/GUI.h

@@ -1,4 +1,5 @@
 stm32f103_c8t6\gui.o: ..\Sourse_Library\2_SA_peripheral\GUI.c
+stm32f103_c8t6\gui.o: ..\Sourse_Library\2_SA_peripheral\gui.h
 stm32f103_c8t6\gui.o: ../Core/Inc/main.h
 stm32f103_c8t6\gui.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 stm32f103_c8t6\gui.o: ../Core/Inc/stm32f1xx_hal_conf.h
@@ -31,8 +32,7 @@ stm32f103_c8t6\gui.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h
 stm32f103_c8t6\gui.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 stm32f103_c8t6\gui.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 stm32f103_c8t6\gui.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+stm32f103_c8t6\gui.o: ..\Sourse_Library\2_SA_peripheral\font.h
 stm32f103_c8t6\gui.o: ..\Sourse_Library\2_SA_peripheral\lcd.h
 stm32f103_c8t6\gui.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdlib.h
 stm32f103_c8t6\gui.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\string.h
-stm32f103_c8t6\gui.o: ..\Sourse_Library\2_SA_peripheral\font.h
-stm32f103_c8t6\gui.o: ..\Sourse_Library\2_SA_peripheral\gui.h

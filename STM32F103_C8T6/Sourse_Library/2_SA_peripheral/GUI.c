@@ -1,782 +1,759 @@
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//²âÊÔÓ²¼ş£ºµ¥Æ¬»úSTM32F407ZGT6,ÕıµãÔ­×ÓExplorer STM32F4¿ª·¢°å,Ö÷Æµ168MHZ£¬¾§Õñ12MHZ
-//QDtech-TFTÒº¾§Çı¶¯ for STM32 IOÄ£Äâ
-//xiao·ë@ShenZhen QDtech co.,LTD
-//¹«Ë¾ÍøÕ¾:www.qdtft.com
-//ÌÔ±¦ÍøÕ¾£ºhttp://qdtech.taobao.com
-//wiki¼¼ÊõÍøÕ¾£ºhttp://www.lcdwiki.com
-//ÎÒË¾Ìá¹©¼¼ÊõÖ§³Ö£¬ÈÎºÎ¼¼ÊõÎÊÌâ»¶Ó­ËæÊ±½»Á÷Ñ§Ï°
-//¹Ì»°(´«Õæ) :+86 0755-23594567 
-//ÊÖ»ú:15989313508£¨·ë¹¤£© 
-//ÓÊÏä:lcdwiki01@gmail.com    support@lcdwiki.com    goodtft@163.com 
-//¼¼ÊõÖ§³ÖQQ:3002773612  3002778157
-//¼¼Êõ½»Á÷QQÈº:324828016
-//´´½¨ÈÕÆÚ:2018/08/22
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ÉîÛÚÊĞÈ«¶¯µç×Ó¼¼ÊõÓĞÏŞ¹«Ë¾ 2018-2028
-//All rights reserved
+//////////////////////////////////////////////////////////////////////////////////
+// æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+// æµ‹è¯•ç¡¬ä»¶ï¼šå•ç‰‡æœºSTM32F407ZGT6,æ­£ç‚¹åŸå­Explorer
+// STM32F4å¼€å‘æ¿,ä¸»é¢‘168MHZï¼Œæ™¶æŒ¯12MHZ QDtech-TFTæ¶²æ™¶é©±åŠ¨ for STM32 IOæ¨¡æ‹Ÿ
+// xiaoå†¯@ShenZhen QDtech co.,LTD
+// å…¬å¸ç½‘ç«™:www.qdtft.com
+// æ·˜å®ç½‘ç«™ï¼šhttp://qdtech.taobao.com
+// wikiæŠ€æœ¯ç½‘ç«™ï¼šhttp://www.lcdwiki.com
+// æˆ‘å¸æä¾›æŠ€æœ¯æ”¯æŒï¼Œä»»ä½•æŠ€æœ¯é—®é¢˜æ¬¢è¿éšæ—¶äº¤æµå­¦ä¹ 
+// å›ºè¯(ä¼ çœŸ) :+86 0755-23594567
+// æ‰‹æœº:15989313508ï¼ˆå†¯å·¥ï¼‰
+// é‚®ç®±:lcdwiki01@gmail.com    support@lcdwiki.com    goodtft@163.com
+// æŠ€æœ¯æ”¯æŒQQ:3002773612  3002778157
+// æŠ€æœ¯äº¤æµQQç¾¤:324828016
+// åˆ›å»ºæ—¥æœŸ:2018/08/22
+// ç‰ˆæœ¬ï¼šV1.0
+// ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+// Copyright(C) æ·±åœ³å¸‚å…¨åŠ¨ç”µå­æŠ€æœ¯æœ‰é™å…¬å¸ 2018-2028
+// All rights reserved
 /****************************************************************************************************
-//=========================================µçÔ´½ÓÏß================================================//
-//     LCDÄ£¿é                STM32µ¥Æ¬»ú
-//      VCC          ½Ó          3.3V         //µçÔ´
-//      GND          ½Ó          GND          //µçÔ´µØ
-//=======================================Òº¾§ÆÁÊı¾İÏß½ÓÏß==========================================//
-//±¾Ä£¿éÄ¬ÈÏÊı¾İ×ÜÏßÀàĞÍÎª4ÏßÖÆSPI×ÜÏß
-//     LCDÄ£¿é                STM32µ¥Æ¬»ú    
-//       SDA         ½Ó          PB5          //Òº¾§ÆÁSPI×ÜÏßÊı¾İĞ´ĞÅºÅ
-//=======================================Òº¾§ÆÁ¿ØÖÆÏß½ÓÏß==========================================//
-//     LCDÄ£¿é 					      STM32µ¥Æ¬»ú 
-//       BLK         ½Ó          PB13         //Òº¾§ÆÁ±³¹â¿ØÖÆĞÅºÅ£¬Èç¹û²»ĞèÒª¿ØÖÆ£¬½Ó3.3V
-//       SCL         ½Ó          PB3          //Òº¾§ÆÁSPI×ÜÏßÊ±ÖÓĞÅºÅ
-//       DC          ½Ó          PB14         //Òº¾§ÆÁÊı¾İ/ÃüÁî¿ØÖÆĞÅºÅ
-//       RES         ½Ó          PB12         //Òº¾§ÆÁ¸´Î»¿ØÖÆĞÅºÅ
-//       CS          ½Ó          PB15         //Òº¾§ÆÁÆ¬Ñ¡¿ØÖÆĞÅºÅ
-//=========================================´¥ÃşÆÁ´¥½ÓÏß=========================================//
-//Èç¹ûÄ£¿é²»´ø´¥Ãş¹¦ÄÜ»òÕß´øÓĞ´¥Ãş¹¦ÄÜ£¬µ«ÊÇ²»ĞèÒª´¥Ãş¹¦ÄÜ£¬Ôò²»ĞèÒª½øĞĞ´¥ÃşÆÁ½ÓÏß
-//	   LCDÄ£¿é                STM32µ¥Æ¬»ú 
-//      T_IRQ        ½Ó          PB1          //´¥ÃşÆÁ´¥ÃşÖĞ¶ÏĞÅºÅ
-//      T_DO         ½Ó          PB2          //´¥ÃşÆÁSPI×ÜÏß¶ÁĞÅºÅ
-//      T_DIN        ½Ó          PF11         //´¥ÃşÆÁSPI×ÜÏßĞ´ĞÅºÅ
-//      T_CS         ½Ó          PC5          //´¥ÃşÆÁÆ¬Ñ¡¿ØÖÆĞÅºÅ
-//      T_CLK        ½Ó          PB0          //´¥ÃşÆÁSPI×ÜÏßÊ±ÖÓĞÅºÅ
-**************************************************************************************************/	
- /* @attention
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-**************************************************************************************************/	
-#include "main.h"
-#include "lcd.h"
-#include "string.h"
-#include "font.h" 
+//=========================================ç”µæºæ¥çº¿================================================//
+//     LCDæ¨¡å—                STM32å•ç‰‡æœº
+//      VCC          æ¥          3.3V         //ç”µæº
+//      GND          æ¥          GND          //ç”µæºåœ°
+//=======================================æ¶²æ™¶å±æ•°æ®çº¿æ¥çº¿==========================================//
+//æœ¬æ¨¡å—é»˜è®¤æ•°æ®æ€»çº¿ç±»å‹ä¸º4çº¿åˆ¶SPIæ€»çº¿
+//     LCDæ¨¡å—                STM32å•ç‰‡æœº
+//       SDA         æ¥          PB5          //æ¶²æ™¶å±SPIæ€»çº¿æ•°æ®å†™ä¿¡å·
+//=======================================æ¶²æ™¶å±æ§åˆ¶çº¿æ¥çº¿==========================================//
+//     LCDæ¨¡å— 					      STM32å•ç‰‡æœº
+//       BLK         æ¥          PB13
+//æ¶²æ™¶å±èƒŒå…‰æ§åˆ¶ä¿¡å·ï¼Œå¦‚æœä¸éœ€è¦æ§åˆ¶ï¼Œæ¥3.3V
+//       SCL         æ¥          PB3          //æ¶²æ™¶å±SPIæ€»çº¿æ—¶é’Ÿä¿¡å·
+//       DC          æ¥          PB14         //æ¶²æ™¶å±æ•°æ®/å‘½ä»¤æ§åˆ¶ä¿¡å·
+//       RES         æ¥          PB12         //æ¶²æ™¶å±å¤ä½æ§åˆ¶ä¿¡å·
+//       CS          æ¥          PB15         //æ¶²æ™¶å±ç‰‡é€‰æ§åˆ¶ä¿¡å·
+//=========================================è§¦æ‘¸å±è§¦æ¥çº¿=========================================//
+//å¦‚æœæ¨¡å—ä¸å¸¦è§¦æ‘¸åŠŸèƒ½æˆ–è€…å¸¦æœ‰è§¦æ‘¸åŠŸèƒ½ï¼Œä½†æ˜¯ä¸éœ€è¦è§¦æ‘¸åŠŸèƒ½ï¼Œåˆ™ä¸éœ€è¦è¿›è¡Œè§¦æ‘¸å±æ¥çº¿
+//	   LCDæ¨¡å—                STM32å•ç‰‡æœº
+//      T_IRQ        æ¥          PB1          //è§¦æ‘¸å±è§¦æ‘¸ä¸­æ–­ä¿¡å·
+//      T_DO         æ¥          PB2          //è§¦æ‘¸å±SPIæ€»çº¿è¯»ä¿¡å·
+//      T_DIN        æ¥          PF11         //è§¦æ‘¸å±SPIæ€»çº¿å†™ä¿¡å·
+//      T_CS         æ¥          PC5          //è§¦æ‘¸å±ç‰‡é€‰æ§åˆ¶ä¿¡å·
+//      T_CLK        æ¥          PB0          //è§¦æ‘¸å±SPIæ€»çº¿æ—¶é’Ÿä¿¡å·
+**************************************************************************************************/
+/* @attention
+ *
+ * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+ * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+ * TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
+ * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+ * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+ * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+ **************************************************************************************************/
 #include "gui.h"
+#include "font.h"
+#include "lcd.h"
+#include "main.h"
+#include "string.h"
+
 
 /*******************************************************************
  * @name       :void GUI_DrawPoint(uint16_t x,uint16_t y,uint16_t color)
- * @date       :2018-08-09 
+ * @date       :2018-08-09
  * @function   :draw a point in LCD screen
  * @parameters :x:the x coordinate of the point
                 y:the y coordinate of the point
-								color:the color value of the point
+                                                                color:the color
+value of the point
  * @retvalue   :None
 ********************************************************************/
-void GUI_DrawPoint(uint16_t x,uint16_t y,uint16_t color)
-{
-	LCD_SetCursor(x,y);//ÉèÖÃ¹â±êÎ»ÖÃ 
-	Lcd_WriteData_16Bit(color); 
+void GUI_DrawPoint(uint16_t x, uint16_t y, uint16_t color) {
+  LCD_SetCursor(x, y); // è®¾ç½®å…‰æ ‡ä½ç½®
+  Lcd_WriteData_16Bit(color);
 }
 
 /*******************************************************************
- * @name       :void LCD_Fill(uint16_t sx,uint16_t sy,uint16_t ex,uint16_t ey,uint16_t color)
- * @date       :2018-08-09 
+ * @name       :void LCD_Fill(uint16_t sx,uint16_t sy,uint16_t ex,uint16_t
+ey,uint16_t color)
+ * @date       :2018-08-09
  * @function   :fill the specified area
  * @parameters :sx:the bebinning x coordinate of the specified area
                 sy:the bebinning y coordinate of the specified area
-								ex:the ending x coordinate of the specified area
-								ey:the ending y coordinate of the specified area
-								color:the filled color value
+                                                                ex:the ending x
+coordinate of the specified area ey:the ending y coordinate of the specified
+area color:the filled color value
  * @retvalue   :None
 ********************************************************************/
-void LCD_Fill(uint16_t sx,uint16_t sy,uint16_t ex,uint16_t ey,uint16_t color)
-{  	
-	uint16_t i,j;			
-	uint16_t width=ex-sx+1; 		//µÃµ½Ìî³äµÄ¿í¶È
-	uint16_t height=ey-sy+1;		//¸ß¶È
-	LCD_SetWindows(sx,sy,ex,ey);//ÉèÖÃÏÔÊ¾´°¿Ú
-	for(i=0;i<height;i++)
-	{
-		for(j=0;j<width;j++)
-		Lcd_WriteData_16Bit(color);	//Ğ´ÈëÊı¾İ 	 
-	}
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÉèÖÃÎªÈ«ÆÁ
+void LCD_Fill(uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey,
+              uint16_t color) {
+  uint16_t i, j;
+  uint16_t width = ex - sx + 1;   // å¾—åˆ°å¡«å……çš„å®½åº¦
+  uint16_t height = ey - sy + 1;  // é«˜åº¦
+  LCD_SetWindows(sx, sy, ex, ey); // è®¾ç½®æ˜¾ç¤ºçª—å£
+  for (i = 0; i < height; i++) {
+    for (j = 0; j < width; j++)
+      Lcd_WriteData_16Bit(color); // å†™å…¥æ•°æ®
+  }
+  LCD_SetWindows(0, 0, lcddev.width - 1,
+                 lcddev.height - 1); // æ¢å¤çª—å£è®¾ç½®ä¸ºå…¨å±
 }
 
 /*******************************************************************
- * @name       :void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
- * @date       :2018-08-09 
+ * @name       :void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2,
+uint16_t y2)
+ * @date       :2018-08-09
  * @function   :Draw a line between two points
  * @parameters :x1:the bebinning x coordinate of the line
                 y1:the bebinning y coordinate of the line
-								x2:the ending x coordinate of the line
-								y2:the ending y coordinate of the line
+                                                                x2:the ending x
+coordinate of the line y2:the ending y coordinate of the line
  * @retvalue   :None
 ********************************************************************/
-void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
-{
-	uint16_t t; 
-	int xerr=0,yerr=0,delta_x,delta_y,distance; 
-	int incx,incy,uRow,uCol; 
+void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+  uint16_t t;
+  int xerr = 0, yerr = 0, delta_x, delta_y, distance;
+  int incx, incy, uRow, uCol;
 
-	delta_x=x2-x1; //¼ÆËã×ø±êÔöÁ¿ 
-	delta_y=y2-y1; 
-	uRow=x1; 
-	uCol=y1; 
-	if(delta_x>0)incx=1; //ÉèÖÃµ¥²½·½Ïò 
-	else if(delta_x==0)incx=0;//´¹Ö±Ïß 
-	else {incx=-1;delta_x=-delta_x;} 
-	if(delta_y>0)incy=1; 
-	else if(delta_y==0)incy=0;//Ë®Æ½Ïß 
-	else{incy=-1;delta_y=-delta_y;} 
-	if( delta_x>delta_y)distance=delta_x; //Ñ¡È¡»ù±¾ÔöÁ¿×ø±êÖá 
-	else distance=delta_y; 
-	for(t=0;t<=distance+1;t++ )//»­ÏßÊä³ö 
-	{  
-		LCD_DrawPoint(uRow,uCol);//»­µã 
-		xerr+=delta_x ; 
-		yerr+=delta_y ; 
-		if(xerr>distance) 
-		{ 
-			xerr-=distance; 
-			uRow+=incx; 
-		} 
-		if(yerr>distance) 
-		{ 
-			yerr-=distance; 
-			uCol+=incy; 
-		} 
-	}  
-} 
+  delta_x = x2 - x1; // è®¡ç®—åæ ‡å¢é‡
+  delta_y = y2 - y1;
+  uRow = x1;
+  uCol = y1;
+  if (delta_x > 0)
+    incx = 1; // è®¾ç½®å•æ­¥æ–¹å‘
+  else if (delta_x == 0)
+    incx = 0; // å‚ç›´çº¿
+  else {
+    incx = -1;
+    delta_x = -delta_x;
+  }
+  if (delta_y > 0)
+    incy = 1;
+  else if (delta_y == 0)
+    incy = 0; // æ°´å¹³çº¿
+  else {
+    incy = -1;
+    delta_y = -delta_y;
+  }
+  if (delta_x > delta_y)
+    distance = delta_x; // é€‰å–åŸºæœ¬å¢é‡åæ ‡è½´
+  else
+    distance = delta_y;
+  for (t = 0; t <= distance + 1; t++) // ç”»çº¿è¾“å‡º
+  {
+    LCD_DrawPoint(uRow, uCol); // ç”»ç‚¹
+    xerr += delta_x;
+    yerr += delta_y;
+    if (xerr > distance) {
+      xerr -= distance;
+      uRow += incx;
+    }
+    if (yerr > distance) {
+      yerr -= distance;
+      uCol += incy;
+    }
+  }
+}
 
 /*****************************************************************************
- * @name       :void LCD_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
- * @date       :2018-08-09 
+ * @name       :void LCD_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2,
+uint16_t y2)
+ * @date       :2018-08-09
  * @function   :Draw a rectangle
  * @parameters :x1:the bebinning x coordinate of the rectangle
                 y1:the bebinning y coordinate of the rectangle
-								x2:the ending x coordinate of the rectangle
-								y2:the ending y coordinate of the rectangle
+                                                                x2:the ending x
+coordinate of the rectangle y2:the ending y coordinate of the rectangle
  * @retvalue   :None
 ******************************************************************************/
-void LCD_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
-{
-	LCD_DrawLine(x1,y1,x2,y1);
-	LCD_DrawLine(x1,y1,x1,y2);
-	LCD_DrawLine(x1,y2,x2,y2);
-	LCD_DrawLine(x2,y1,x2,y2);
-}  
+void LCD_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+  LCD_DrawLine(x1, y1, x2, y1);
+  LCD_DrawLine(x1, y1, x1, y2);
+  LCD_DrawLine(x1, y2, x2, y2);
+  LCD_DrawLine(x2, y1, x2, y2);
+}
 
 /*****************************************************************************
- * @name       :void LCD_DrawFillRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
- * @date       :2018-08-09 
+ * @name       :void LCD_DrawFillRectangle(uint16_t x1, uint16_t y1, uint16_t
+x2, uint16_t y2)
+ * @date       :2018-08-09
  * @function   :Filled a rectangle
  * @parameters :x1:the bebinning x coordinate of the filled rectangle
                 y1:the bebinning y coordinate of the filled rectangle
-								x2:the ending x coordinate of the filled rectangle
-								y2:the ending y coordinate of the filled rectangle
+                                                                x2:the ending x
+coordinate of the filled rectangle y2:the ending y coordinate of the filled
+rectangle
  * @retvalue   :None
-******************************************************************************/  
-void LCD_DrawFillRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2)
-{
-	LCD_Fill(x1,y1,x2,y2,POINT_COLOR);
+******************************************************************************/
+void LCD_DrawFillRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2) {
+  LCD_Fill(x1, y1, x2, y2, POINT_COLOR);
 }
- 
+
 /*****************************************************************************
  * @name       :void _draw_circle_8(int xc, int yc, int x, int y, uint16_t c)
- * @date       :2018-08-09 
+ * @date       :2018-08-09
  * @function   :8 symmetry circle drawing algorithm (internal call)
- * @parameters :xc:the x coordinate of the Circular center 
-                yc:the y coordinate of the Circular center 
-								x:the x coordinate relative to the Circular center 
-								y:the y coordinate relative to the Circular center 
-								c:the color value of the circle
+ * @parameters :xc:the x coordinate of the Circular center
+                yc:the y coordinate of the Circular center
+                                                                x:the x
+coordinate relative to the Circular center y:the y coordinate relative to the
+Circular center c:the color value of the circle
  * @retvalue   :None
-******************************************************************************/  
-void _draw_circle_8(int xc, int yc, int x, int y, uint16_t c)
-{
-	GUI_DrawPoint(xc + x, yc + y, c);
+******************************************************************************/
+void _draw_circle_8(int xc, int yc, int x, int y, uint16_t c) {
+  GUI_DrawPoint(xc + x, yc + y, c);
 
-	GUI_DrawPoint(xc - x, yc + y, c);
+  GUI_DrawPoint(xc - x, yc + y, c);
 
-	GUI_DrawPoint(xc + x, yc - y, c);
+  GUI_DrawPoint(xc + x, yc - y, c);
 
-	GUI_DrawPoint(xc - x, yc - y, c);
+  GUI_DrawPoint(xc - x, yc - y, c);
 
-	GUI_DrawPoint(xc + y, yc + x, c);
+  GUI_DrawPoint(xc + y, yc + x, c);
 
-	GUI_DrawPoint(xc - y, yc + x, c);
+  GUI_DrawPoint(xc - y, yc + x, c);
 
-	GUI_DrawPoint(xc + y, yc - x, c);
+  GUI_DrawPoint(xc + y, yc - x, c);
 
-	GUI_DrawPoint(xc - y, yc - x, c);
+  GUI_DrawPoint(xc - y, yc - x, c);
 }
 
 /*****************************************************************************
  * @name       :void gui_circle(int xc, int yc,uint16_t c,int r, int fill)
- * @date       :2018-08-09 
+ * @date       :2018-08-09
  * @function   :Draw a circle of specified size at a specified location
- * @parameters :xc:the x coordinate of the Circular center 
-                yc:the y coordinate of the Circular center 
-								r:Circular radius
-								fill:1-filling,0-no filling
+ * @parameters :xc:the x coordinate of the Circular center
+                yc:the y coordinate of the Circular center
+                                                                r:Circular
+radius fill:1-filling,0-no filling
  * @retvalue   :None
-******************************************************************************/  
-void gui_circle(int xc, int yc,uint16_t c,int r, int fill)
-{
-	int x = 0, y = r, yi, d;
+******************************************************************************/
+void gui_circle(int xc, int yc, uint16_t c, int r, int fill) {
+  int x = 0, y = r, yi, d;
 
-	d = 3 - 2 * r;
+  d = 3 - 2 * r;
 
+  if (fill) {
+    // å¦‚æœå¡«å……ï¼ˆç”»å®å¿ƒåœ†ï¼‰
+    while (x <= y) {
+      for (yi = x; yi <= y; yi++)
+        _draw_circle_8(xc, yc, x, yi, c);
 
-	if (fill) 
-	{
-		// Èç¹ûÌî³ä£¨»­ÊµĞÄÔ²£©
-		while (x <= y) {
-			for (yi = x; yi <= y; yi++)
-				_draw_circle_8(xc, yc, x, yi, c);
-
-			if (d < 0) {
-				d = d + 4 * x + 6;
-			} else {
-				d = d + 4 * (x - y) + 10;
-				y--;
-			}
-			x++;
-		}
-	} else 
-	{
-		// Èç¹û²»Ìî³ä£¨»­¿ÕĞÄÔ²£©
-		while (x <= y) {
-			_draw_circle_8(xc, yc, x, y, c);
-			if (d < 0) {
-				d = d + 4 * x + 6;
-			} else {
-				d = d + 4 * (x - y) + 10;
-				y--;
-			}
-			x++;
-		}
-	}
-}
-
-/*****************************************************************************
- * @name       :void Draw_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
- * @date       :2018-08-09 
- * @function   :Draw a triangle at a specified position
- * @parameters :x0:the bebinning x coordinate of the triangular edge 
-                y0:the bebinning y coordinate of the triangular edge 
-								x1:the vertex x coordinate of the triangular
-								y1:the vertex y coordinate of the triangular
-								x2:the ending x coordinate of the triangular edge 
-								y2:the ending y coordinate of the triangular edge 
- * @retvalue   :None
-******************************************************************************/ 
-void Draw_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
-{
-	LCD_DrawLine(x0,y0,x1,y1);
-	LCD_DrawLine(x1,y1,x2,y2);
-	LCD_DrawLine(x2,y2,x0,y0);
-}
-
-static void _swap(uint16_t *a, uint16_t *b)
-{
-	uint16_t tmp;
-  tmp = *a;
-	*a = *b;
-	*b = tmp;
-}
-
-/*****************************************************************************
- * @name       :void Fill_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
- * @date       :2018-08-09 
- * @function   :filling a triangle at a specified position
- * @parameters :x0:the bebinning x coordinate of the triangular edge 
-                y0:the bebinning y coordinate of the triangular edge 
-								x1:the vertex x coordinate of the triangular
-								y1:the vertex y coordinate of the triangular
-								x2:the ending x coordinate of the triangular edge 
-								y2:the ending y coordinate of the triangular edge 
- * @retvalue   :None
-******************************************************************************/ 
-void Fill_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
-{
-	uint16_t a, b, y, last;
-	int dx01, dy01, dx02, dy02, dx12, dy12;
-	long sa = 0;
-	long sb = 0;
- 	if (y0 > y1) 
-	{
-    _swap(&y0,&y1); 
-		_swap(&x0,&x1);
- 	}
- 	if (y1 > y2) 
-	{
-    _swap(&y2,&y1); 
-		_swap(&x2,&x1);
- 	}
-  if (y0 > y1) 
-	{
-    _swap(&y0,&y1); 
-		_swap(&x0,&x1);
+      if (d < 0) {
+        d = d + 4 * x + 6;
+      } else {
+        d = d + 4 * (x - y) + 10;
+        y--;
+      }
+      x++;
+    }
+  } else {
+    // å¦‚æœä¸å¡«å……ï¼ˆç”»ç©ºå¿ƒåœ†ï¼‰
+    while (x <= y) {
+      _draw_circle_8(xc, yc, x, y, c);
+      if (d < 0) {
+        d = d + 4 * x + 6;
+      } else {
+        d = d + 4 * (x - y) + 10;
+        y--;
+      }
+      x++;
+    }
   }
-	if(y0 == y2) 
-	{ 
-		a = b = x0;
-		if(x1 < a)
-    {
-			a = x1;
-    }
-    else if(x1 > b)
-    {
-			b = x1;
-    }
-    if(x2 < a)
-    {
-			a = x2;
-    }
-		else if(x2 > b)
-    {
-			b = x2;
-    }
-		LCD_Fill(a,y0,b,y0,POINT_COLOR);
-    return;
-	}
-	dx01 = x1 - x0;
-	dy01 = y1 - y0;
-	dx02 = x2 - x0;
-	dy02 = y2 - y0;
-	dx12 = x2 - x1;
-	dy12 = y2 - y1;
-	
-	if(y1 == y2)
-	{
-		last = y1; 
-	}
-  else
-	{
-		last = y1-1; 
-	}
-	for(y=y0; y<=last; y++) 
-	{
-		a = x0 + sa / dy01;
-		b = x0 + sb / dy02;
-		sa += dx01;
-    sb += dx02;
-    if(a > b)
-    {
-			_swap(&a,&b);
-		}
-		LCD_Fill(a,y,b,y,POINT_COLOR);
-	}
-	sa = dx12 * (y - y1);
-	sb = dx02 * (y - y0);
-	for(; y<=y2; y++) 
-	{
-		a = x1 + sa / dy12;
-		b = x0 + sb / dy02;
-		sa += dx12;
-		sb += dx02;
-		if(a > b)
-		{
-			_swap(&a,&b);
-		}
-		LCD_Fill(a,y,b,y,POINT_COLOR);
-	}
 }
 
 /*****************************************************************************
- * @name       :void LCD_ShowChar(uint16_t x,uint16_t y,uint16_t fc, uint16_t bc, uint8_t num,uint8_t size,uint8_t mode)
- * @date       :2018-08-09 
+ * @name       :void Draw_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t
+y1,uint16_t x2,uint16_t y2)
+ * @date       :2018-08-09
+ * @function   :Draw a triangle at a specified position
+ * @parameters :x0:the bebinning x coordinate of the triangular edge
+                y0:the bebinning y coordinate of the triangular edge
+                                                                x1:the vertex x
+coordinate of the triangular y1:the vertex y coordinate of the triangular x2:the
+ending x coordinate of the triangular edge y2:the ending y coordinate of the
+triangular edge
+ * @retvalue   :None
+******************************************************************************/
+void Draw_Triangel(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                   uint16_t x2, uint16_t y2) {
+  LCD_DrawLine(x0, y0, x1, y1);
+  LCD_DrawLine(x1, y1, x2, y2);
+  LCD_DrawLine(x2, y2, x0, y0);
+}
+
+static void _swap(uint16_t *a, uint16_t *b) {
+  uint16_t tmp;
+  tmp = *a;
+  *a = *b;
+  *b = tmp;
+}
+
+/*****************************************************************************
+ * @name       :void Fill_Triangel(uint16_t x0,uint16_t y0,uint16_t x1,uint16_t
+y1,uint16_t x2,uint16_t y2)
+ * @date       :2018-08-09
+ * @function   :filling a triangle at a specified position
+ * @parameters :x0:the bebinning x coordinate of the triangular edge
+                y0:the bebinning y coordinate of the triangular edge
+                                                                x1:the vertex x
+coordinate of the triangular y1:the vertex y coordinate of the triangular x2:the
+ending x coordinate of the triangular edge y2:the ending y coordinate of the
+triangular edge
+ * @retvalue   :None
+******************************************************************************/
+void Fill_Triangel(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                   uint16_t x2, uint16_t y2) {
+  uint16_t a, b, y, last;
+  int dx01, dy01, dx02, dy02, dx12, dy12;
+  long sa = 0;
+  long sb = 0;
+  if (y0 > y1) {
+    _swap(&y0, &y1);
+    _swap(&x0, &x1);
+  }
+  if (y1 > y2) {
+    _swap(&y2, &y1);
+    _swap(&x2, &x1);
+  }
+  if (y0 > y1) {
+    _swap(&y0, &y1);
+    _swap(&x0, &x1);
+  }
+  if (y0 == y2) {
+    a = b = x0;
+    if (x1 < a) {
+      a = x1;
+    } else if (x1 > b) {
+      b = x1;
+    }
+    if (x2 < a) {
+      a = x2;
+    } else if (x2 > b) {
+      b = x2;
+    }
+    LCD_Fill(a, y0, b, y0, POINT_COLOR);
+    return;
+  }
+  dx01 = x1 - x0;
+  dy01 = y1 - y0;
+  dx02 = x2 - x0;
+  dy02 = y2 - y0;
+  dx12 = x2 - x1;
+  dy12 = y2 - y1;
+
+  if (y1 == y2) {
+    last = y1;
+  } else {
+    last = y1 - 1;
+  }
+  for (y = y0; y <= last; y++) {
+    a = x0 + sa / dy01;
+    b = x0 + sb / dy02;
+    sa += dx01;
+    sb += dx02;
+    if (a > b) {
+      _swap(&a, &b);
+    }
+    LCD_Fill(a, y, b, y, POINT_COLOR);
+  }
+  sa = dx12 * (y - y1);
+  sb = dx02 * (y - y0);
+  for (; y <= y2; y++) {
+    a = x1 + sa / dy12;
+    b = x0 + sb / dy02;
+    sa += dx12;
+    sb += dx02;
+    if (a > b) {
+      _swap(&a, &b);
+    }
+    LCD_Fill(a, y, b, y, POINT_COLOR);
+  }
+}
+
+/*****************************************************************************
+ * @name       :void LCD_ShowChar(uint16_t x,uint16_t y,uint16_t fc, uint16_t
+bc, uint8_t num,uint8_t size,uint8_t mode)
+ * @date       :2018-08-09
  * @function   :Display a single English character
  * @parameters :x:the bebinning x coordinate of the Character display position
                 y:the bebinning y coordinate of the Character display position
-								fc:the color value of display character
-								bc:the background color of display character
-								num:the ascii code of display character(0~94)
-								size:the size of display character
-								mode:0-no overlying,1-overlying
+                                                                fc:the color
+value of display character bc:the background color of display character num:the
+ascii code of display character(0~94) size:the size of display character
+                                                                mode:0-no
+overlying,1-overlying
  * @retvalue   :None
-******************************************************************************/ 
-void LCD_ShowChar(uint16_t x,uint16_t y,uint16_t fc, uint16_t bc, uint8_t num,uint8_t size,uint8_t mode)
-{  
-    uint8_t temp;
-    uint8_t pos,t;
-	uint16_t colortemp=POINT_COLOR;      
-		   
-	num=num-' ';//µÃµ½Æ«ÒÆºóµÄÖµ
-	LCD_SetWindows(x,y,x+size/2-1,y+size-1);//ÉèÖÃµ¥¸öÎÄ×ÖÏÔÊ¾´°¿Ú
-	if(!mode) //·Çµş¼Ó·½Ê½
-	{		
-		for(pos=0;pos<size;pos++)
-		{
-			if(size==12)temp=asc2_1206[num][pos];//µ÷ÓÃ1206×ÖÌå
-			else temp=asc2_1608[num][pos];		 //µ÷ÓÃ1608×ÖÌå
-			for(t=0;t<size/2;t++)
-		    {                 
-		        if(temp&0x01)Lcd_WriteData_16Bit(fc); 
-				else Lcd_WriteData_16Bit(bc); 
-				temp>>=1; 
-				
-		    }
-			
-		}	
-	}else//µş¼Ó·½Ê½
-	{
-		for(pos=0;pos<size;pos++)
-		{
-			if(size==12)temp=asc2_1206[num][pos];//µ÷ÓÃ1206×ÖÌå
-			else temp=asc2_1608[num][pos];		 //µ÷ÓÃ1608×ÖÌå
-			for(t=0;t<size/2;t++)
-		    {   
-				POINT_COLOR=fc;              
-		        if(temp&0x01)LCD_DrawPoint(x+t,y+pos);//»­Ò»¸öµã    
-		        temp>>=1; 
-		    }
-		}
-	}
-	POINT_COLOR=colortemp;	
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ    	   	 	  
+******************************************************************************/
+void LCD_ShowChar(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t num,
+                  uint8_t size, uint8_t mode) {
+  uint8_t temp;
+  uint8_t pos, t;
+  uint16_t colortemp = POINT_COLOR;
+
+  num = num - ' ';                                      // å¾—åˆ°åç§»åçš„å€¼
+  LCD_SetWindows(x, y, x + size / 2 - 1, y + size - 1); // è®¾ç½®å•ä¸ªæ–‡å­—æ˜¾ç¤ºçª—å£
+  if (!mode)                                            // éå åŠ æ–¹å¼
+  {
+    for (pos = 0; pos < size; pos++) {
+      if (size == 12)
+        temp = asc2_1206[num][pos]; // è°ƒç”¨1206å­—ä½“
+      else
+        temp = asc2_1608[num][pos]; // è°ƒç”¨1608å­—ä½“
+      for (t = 0; t < size / 2; t++) {
+        if (temp & 0x01)
+          Lcd_WriteData_16Bit(fc);
+        else
+          Lcd_WriteData_16Bit(bc);
+        temp >>= 1;
+      }
+    }
+  } else // å åŠ æ–¹å¼
+  {
+    for (pos = 0; pos < size; pos++) {
+      if (size == 12)
+        temp = asc2_1206[num][pos]; // è°ƒç”¨1206å­—ä½“
+      else
+        temp = asc2_1608[num][pos]; // è°ƒç”¨1608å­—ä½“
+      for (t = 0; t < size / 2; t++) {
+        POINT_COLOR = fc;
+        if (temp & 0x01)
+          LCD_DrawPoint(x + t, y + pos); // ç”»ä¸€ä¸ªç‚¹
+        temp >>= 1;
+      }
+    }
+  }
+  POINT_COLOR = colortemp;
+  LCD_SetWindows(0, 0, lcddev.width - 1, lcddev.height - 1); // æ¢å¤çª—å£ä¸ºå…¨å±
 }
 
 /*****************************************************************************
- * @name       :void LCD_ShowString(uint16_t x,uint16_t y,uint8_t size,uint8_t *p,uint8_t mode)
- * @date       :2018-08-09 
+ * @name       :void LCD_ShowString(uint16_t x,uint16_t y,uint8_t size,uint8_t
+*p,uint8_t mode)
+ * @date       :2018-08-09
  * @function   :Display English string
  * @parameters :x:the bebinning x coordinate of the English string
                 y:the bebinning y coordinate of the English string
-								p:the start address of the English string
-								size:the size of display character
-								mode:0-no overlying,1-overlying
+                                                                p:the start
+address of the English string size:the size of display character mode:0-no
+overlying,1-overlying
  * @retvalue   :None
-******************************************************************************/   	  
-void LCD_ShowString(uint16_t x,uint16_t y,uint8_t size,uint8_t *p,uint8_t mode)
-{         
-    while((*p<='~')&&(*p>=' '))//ÅĞ¶ÏÊÇ²»ÊÇ·Ç·¨×Ö·û!
-    {   
-		if(x>(lcddev.width-1)||y>(lcddev.height-1)) 
-		return;     
-        LCD_ShowChar(x,y,POINT_COLOR,BACK_COLOR,*p,size,mode);
-        x+=size/2;
-        p++;
-    }  
-} 
+******************************************************************************/
+void LCD_ShowString(uint16_t x, uint16_t y, uint8_t size, uint8_t *p,
+                    uint8_t mode) {
+  while ((*p <= '~') && (*p >= ' ')) // åˆ¤æ–­æ˜¯ä¸æ˜¯éæ³•å­—ç¬¦!
+  {
+    if (x > (lcddev.width - 1) || y > (lcddev.height - 1))
+      return;
+    LCD_ShowChar(x, y, POINT_COLOR, BACK_COLOR, *p, size, mode);
+    x += size / 2;
+    p++;
+  }
+}
 
 /*****************************************************************************
  * @name       :uint32_t mypow(uint8_t m,uint8_t n)
- * @date       :2018-08-09 
+ * @date       :2018-08-09
  * @function   :get the nth power of m (internal call)
  * @parameters :m:the multiplier
                 n:the power
  * @retvalue   :the nth power of m
-******************************************************************************/ 
-uint32_t mypow(uint8_t m,uint8_t n)
-{
-	uint32_t result=1;	 
-	while(n--)result*=m;    
-	return result;
+******************************************************************************/
+uint32_t mypow(uint8_t m, uint8_t n) {
+  uint32_t result = 1;
+  while (n--)
+    result *= m;
+  return result;
 }
 
 /*****************************************************************************
- * @name       :void LCD_ShowNum(uint16_t x,uint16_t y,uint32_t num,uint8_t len,uint8_t size)
- * @date       :2018-08-09 
+ * @name       :void LCD_ShowNum(uint16_t x,uint16_t y,uint32_t num,uint8_t
+len,uint8_t size)
+ * @date       :2018-08-09
  * @function   :Display number
  * @parameters :x:the bebinning x coordinate of the number
                 y:the bebinning y coordinate of the number
-								num:the number(0~4294967295)
-								len:the length of the display number
-								size:the size of display number
+                                                                num:the
+number(0~4294967295) len:the length of the display number size:the size of
+display number
  * @retvalue   :None
-******************************************************************************/  			 
-void LCD_ShowNum(uint16_t x,uint16_t y,uint32_t num,uint8_t len,uint8_t size)
-{         	
-	uint8_t t,temp;
-	uint8_t enshow=0;						   
-	for(t=0;t<len;t++)
-	{
-		temp=(num/mypow(10,len-t-1))%10;
-		if(enshow==0&&t<(len-1))
-		{
-			if(temp==0)
-			{
-				LCD_ShowChar(x+(size/2)*t,y,POINT_COLOR,BACK_COLOR,' ',size,0);
-				continue;
-			}else enshow=1; 
-		 	 
-		}
-	 	LCD_ShowChar(x+(size/2)*t,y,POINT_COLOR,BACK_COLOR,temp+'0',size,0); 
-	}
-} 
+******************************************************************************/
+void LCD_ShowNum(uint16_t x, uint16_t y, uint32_t num, uint8_t len,
+                 uint8_t size) {
+  uint8_t t, temp;
+  uint8_t enshow = 0;
+  for (t = 0; t < len; t++) {
+    temp = (num / mypow(10, len - t - 1)) % 10;
+    if (enshow == 0 && t < (len - 1)) {
+      if (temp == 0) {
+        LCD_ShowChar(x + (size / 2) * t, y, POINT_COLOR, BACK_COLOR, ' ', size,
+                     0);
+        continue;
+      } else
+        enshow = 1;
+    }
+    LCD_ShowChar(x + (size / 2) * t, y, POINT_COLOR, BACK_COLOR, temp + '0',
+                 size, 0);
+  }
+}
 
 /*****************************************************************************
- * @name       :void GUI_DrawFont16(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode)
- * @date       :2018-08-09 
+ * @name       :void GUI_DrawFont16(uint16_t x, uint16_t y, uint16_t fc,
+uint16_t bc, uint8_t *s,uint8_t mode)
+ * @date       :2018-08-09
  * @function   :Display a single 16x16 Chinese character
  * @parameters :x:the bebinning x coordinate of the Chinese character
                 y:the bebinning y coordinate of the Chinese character
-								fc:the color value of Chinese character
-								bc:the background color of Chinese character
-								s:the start address of the Chinese character
-								mode:0-no overlying,1-overlying
+                                                                fc:the color
+value of Chinese character bc:the background color of Chinese character s:the
+start address of the Chinese character mode:0-no overlying,1-overlying
  * @retvalue   :None
-******************************************************************************/ 
-void GUI_DrawFont16(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode)
-{
-	uint8_t i,j;
-	uint16_t k;
-	uint16_t HZnum;
-	uint16_t x0=x;
-	HZnum=sizeof(tfont16)/sizeof(typFNT_GB16);	//×Ô¶¯Í³¼Æºº×ÖÊıÄ¿
-	
-			
-	for (k=0;k<HZnum;k++) 
-	{
-	  if ((tfont16[k].Index[0]==*(s))&&(tfont16[k].Index[1]==*(s+1)))
-	  { 	LCD_SetWindows(x,y,x+16-1,y+16-1);
-		    for(i=0;i<16*2;i++)
-		    {
-				for(j=0;j<8;j++)
-		    	{	
-					if(!mode) //·Çµş¼Ó·½Ê½
-					{
-						if(tfont16[k].Msk[i]&(0x80>>j))	Lcd_WriteData_16Bit(fc);
-						else Lcd_WriteData_16Bit(bc);
-					}
-					else
-					{
-						POINT_COLOR=fc;
-						if(tfont16[k].Msk[i]&(0x80>>j))	LCD_DrawPoint(x,y);//»­Ò»¸öµã
-						x++;
-						if((x-x0)==16)
-						{
-							x=x0;
-							y++;
-							break;
-						}
-					}
+******************************************************************************/
+void GUI_DrawFont16(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                    uint8_t *s, uint8_t mode) {
+  uint8_t i, j;
+  uint16_t k;
+  uint16_t HZnum;
+  uint16_t x0 = x;
+  HZnum = sizeof(tfont16) / sizeof(typFNT_GB16); // è‡ªåŠ¨ç»Ÿè®¡æ±‰å­—æ•°ç›®
 
-				}
-				
-			}
-			
-			
-		}				  	
-		continue;  //²éÕÒµ½¶ÔÓ¦µãÕó×Ö¿âÁ¢¼´ÍË³ö£¬·ÀÖ¹¶à¸öºº×ÖÖØ¸´È¡Ä£´øÀ´Ó°Ïì
-	}
+  for (k = 0; k < HZnum; k++) {
+    if ((tfont16[k].Index[0] == *(s)) && (tfont16[k].Index[1] == *(s + 1))) {
+      LCD_SetWindows(x, y, x + 16 - 1, y + 16 - 1);
+      for (i = 0; i < 16 * 2; i++) {
+        for (j = 0; j < 8; j++) {
+          if (!mode) // éå åŠ æ–¹å¼
+          {
+            if (tfont16[k].Msk[i] & (0x80 >> j))
+              Lcd_WriteData_16Bit(fc);
+            else
+              Lcd_WriteData_16Bit(bc);
+          } else {
+            POINT_COLOR = fc;
+            if (tfont16[k].Msk[i] & (0x80 >> j))
+              LCD_DrawPoint(x, y); // ç”»ä¸€ä¸ªç‚¹
+            x++;
+            if ((x - x0) == 16) {
+              x = x0;
+              y++;
+              break;
+            }
+          }
+        }
+      }
+    }
+    continue; // æŸ¥æ‰¾åˆ°å¯¹åº”ç‚¹é˜µå­—åº“ç«‹å³é€€å‡ºï¼Œé˜²æ­¢å¤šä¸ªæ±‰å­—é‡å¤å–æ¨¡å¸¦æ¥å½±å“
+  }
 
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ  
-} 
+  LCD_SetWindows(0, 0, lcddev.width - 1, lcddev.height - 1); // æ¢å¤çª—å£ä¸ºå…¨å±
+}
 
 /*****************************************************************************
- * @name       :void GUI_DrawFont24(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode)
- * @date       :2018-08-09 
+ * @name       :void GUI_DrawFont24(uint16_t x, uint16_t y, uint16_t fc,
+uint16_t bc, uint8_t *s,uint8_t mode)
+ * @date       :2018-08-09
  * @function   :Display a single 24x24 Chinese character
  * @parameters :x:the bebinning x coordinate of the Chinese character
                 y:the bebinning y coordinate of the Chinese character
-								fc:the color value of Chinese character
-								bc:the background color of Chinese character
-								s:the start address of the Chinese character
-								mode:0-no overlying,1-overlying
+                                                                fc:the color
+value of Chinese character bc:the background color of Chinese character s:the
+start address of the Chinese character mode:0-no overlying,1-overlying
  * @retvalue   :None
-******************************************************************************/ 
-void GUI_DrawFont24(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode)
-{
-	uint8_t i,j;
-	uint16_t k;
-	uint16_t HZnum;
-	uint16_t x0=x;
-	HZnum=sizeof(tfont24)/sizeof(typFNT_GB24);	//×Ô¶¯Í³¼Æºº×ÖÊıÄ¿
-		
-			for (k=0;k<HZnum;k++) 
-			{
-			  if ((tfont24[k].Index[0]==*(s))&&(tfont24[k].Index[1]==*(s+1)))
-			  { 	LCD_SetWindows(x,y,x+24-1,y+24-1);
-				    for(i=0;i<24*3;i++)
-				    {
-							for(j=0;j<8;j++)
-							{
-								if(!mode) //·Çµş¼Ó·½Ê½
-								{
-									if(tfont24[k].Msk[i]&(0x80>>j))	Lcd_WriteData_16Bit(fc);
-									else Lcd_WriteData_16Bit(bc);
-								}
-							else
-							{
-								POINT_COLOR=fc;
-								if(tfont24[k].Msk[i]&(0x80>>j))	LCD_DrawPoint(x,y);//»­Ò»¸öµã
-								x++;
-								if((x-x0)==24)
-								{
-									x=x0;
-									y++;
-									break;
-								}
-							}
-						}
-					}
-					
-					
-				}				  	
-				continue;  //²éÕÒµ½¶ÔÓ¦µãÕó×Ö¿âÁ¢¼´ÍË³ö£¬·ÀÖ¹¶à¸öºº×ÖÖØ¸´È¡Ä£´øÀ´Ó°Ïì
-			}
+******************************************************************************/
+void GUI_DrawFont24(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                    uint8_t *s, uint8_t mode) {
+  uint8_t i, j;
+  uint16_t k;
+  uint16_t HZnum;
+  uint16_t x0 = x;
+  HZnum = sizeof(tfont24) / sizeof(typFNT_GB24); // è‡ªåŠ¨ç»Ÿè®¡æ±‰å­—æ•°ç›®
 
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ  
+  for (k = 0; k < HZnum; k++) {
+    if ((tfont24[k].Index[0] == *(s)) && (tfont24[k].Index[1] == *(s + 1))) {
+      LCD_SetWindows(x, y, x + 24 - 1, y + 24 - 1);
+      for (i = 0; i < 24 * 3; i++) {
+        for (j = 0; j < 8; j++) {
+          if (!mode) // éå åŠ æ–¹å¼
+          {
+            if (tfont24[k].Msk[i] & (0x80 >> j))
+              Lcd_WriteData_16Bit(fc);
+            else
+              Lcd_WriteData_16Bit(bc);
+          } else {
+            POINT_COLOR = fc;
+            if (tfont24[k].Msk[i] & (0x80 >> j))
+              LCD_DrawPoint(x, y); // ç”»ä¸€ä¸ªç‚¹
+            x++;
+            if ((x - x0) == 24) {
+              x = x0;
+              y++;
+              break;
+            }
+          }
+        }
+      }
+    }
+    continue; // æŸ¥æ‰¾åˆ°å¯¹åº”ç‚¹é˜µå­—åº“ç«‹å³é€€å‡ºï¼Œé˜²æ­¢å¤šä¸ªæ±‰å­—é‡å¤å–æ¨¡å¸¦æ¥å½±å“
+  }
+
+  LCD_SetWindows(0, 0, lcddev.width - 1, lcddev.height - 1); // æ¢å¤çª—å£ä¸ºå…¨å±
 }
 
 /*****************************************************************************
- * @name       :void GUI_DrawFont32(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode)
- * @date       :2018-08-09 
+ * @name       :void GUI_DrawFont32(uint16_t x, uint16_t y, uint16_t fc,
+uint16_t bc, uint8_t *s,uint8_t mode)
+ * @date       :2018-08-09
  * @function   :Display a single 32x32 Chinese character
  * @parameters :x:the bebinning x coordinate of the Chinese character
                 y:the bebinning y coordinate of the Chinese character
-								fc:the color value of Chinese character
-								bc:the background color of Chinese character
-								s:the start address of the Chinese character
-								mode:0-no overlying,1-overlying
+                                                                fc:the color
+value of Chinese character bc:the background color of Chinese character s:the
+start address of the Chinese character mode:0-no overlying,1-overlying
  * @retvalue   :None
-******************************************************************************/ 
-void GUI_DrawFont32(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *s,uint8_t mode)
-{
-	uint8_t i,j;
-	uint16_t k;
-	uint16_t HZnum;
-	uint16_t x0=x;
-	HZnum=sizeof(tfont32)/sizeof(typFNT_GB32);	//×Ô¶¯Í³¼Æºº×ÖÊıÄ¿
-	for (k=0;k<HZnum;k++) 
-			{
-			  if ((tfont32[k].Index[0]==*(s))&&(tfont32[k].Index[1]==*(s+1)))
-			  { 	LCD_SetWindows(x,y,x+32-1,y+32-1);
-				    for(i=0;i<32*4;i++)
-				    {
-						for(j=0;j<8;j++)
-				    	{
-							if(!mode) //·Çµş¼Ó·½Ê½
-							{
-								if(tfont32[k].Msk[i]&(0x80>>j))	Lcd_WriteData_16Bit(fc);
-								else Lcd_WriteData_16Bit(bc);
-							}
-							else
-							{
-								POINT_COLOR=fc;
-								if(tfont32[k].Msk[i]&(0x80>>j))	LCD_DrawPoint(x,y);//»­Ò»¸öµã
-								x++;
-								if((x-x0)==32)
-								{
-									x=x0;
-									y++;
-									break;
-								}
-							}
-						}
-					}
-					
-					
-				}				  	
-				continue;  //²éÕÒµ½¶ÔÓ¦µãÕó×Ö¿âÁ¢¼´ÍË³ö£¬·ÀÖ¹¶à¸öºº×ÖÖØ¸´È¡Ä£´øÀ´Ó°Ïì
-			}
-	
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´´°¿ÚÎªÈ«ÆÁ  
-} 
+******************************************************************************/
+void GUI_DrawFont32(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                    uint8_t *s, uint8_t mode) {
+  uint8_t i, j;
+  uint16_t k;
+  uint16_t HZnum;
+  uint16_t x0 = x;
+  HZnum = sizeof(tfont32) / sizeof(typFNT_GB32); // è‡ªåŠ¨ç»Ÿè®¡æ±‰å­—æ•°ç›®
+  for (k = 0; k < HZnum; k++) {
+    if ((tfont32[k].Index[0] == *(s)) && (tfont32[k].Index[1] == *(s + 1))) {
+      LCD_SetWindows(x, y, x + 32 - 1, y + 32 - 1);
+      for (i = 0; i < 32 * 4; i++) {
+        for (j = 0; j < 8; j++) {
+          if (!mode) // éå åŠ æ–¹å¼
+          {
+            if (tfont32[k].Msk[i] & (0x80 >> j))
+              Lcd_WriteData_16Bit(fc);
+            else
+              Lcd_WriteData_16Bit(bc);
+          } else {
+            POINT_COLOR = fc;
+            if (tfont32[k].Msk[i] & (0x80 >> j))
+              LCD_DrawPoint(x, y); // ç”»ä¸€ä¸ªç‚¹
+            x++;
+            if ((x - x0) == 32) {
+              x = x0;
+              y++;
+              break;
+            }
+          }
+        }
+      }
+    }
+    continue; // æŸ¥æ‰¾åˆ°å¯¹åº”ç‚¹é˜µå­—åº“ç«‹å³é€€å‡ºï¼Œé˜²æ­¢å¤šä¸ªæ±‰å­—é‡å¤å–æ¨¡å¸¦æ¥å½±å“
+  }
 
-/*****************************************************************************
- * @name       :void Show_Str(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,uint8_t size,uint8_t mode)
- * @date       :2018-08-09 
- * @function   :Display Chinese and English strings
- * @parameters :x:the bebinning x coordinate of the Chinese and English strings
-                y:the bebinning y coordinate of the Chinese and English strings
-								fc:the color value of Chinese and English strings
-								bc:the background color of Chinese and English strings
-								str:the start address of the Chinese and English strings
-								size:the size of Chinese and English strings
-								mode:0-no overlying,1-overlying
- * @retvalue   :None
-******************************************************************************/	   		   
-void Show_Str(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,uint8_t size,uint8_t mode)
-{					
-	uint16_t x0=x;							  	  
-  	uint8_t bHz=0;     //×Ö·û»òÕßÖĞÎÄ 
-    while(*str!=0)//Êı¾İÎ´½áÊø
-    { 
-        if(!bHz)
-        {
-			if(x>(lcddev.width-size/2)||y>(lcddev.height-size)) 
-			return; 
-	        if(*str>0x80)bHz=1;//ÖĞÎÄ 
-	        else              //×Ö·û
-	        {          
-		        if(*str==0x0D)//»»ĞĞ·ûºÅ
-		        {         
-		            y+=size;
-					x=x0;
-		            str++; 
-		        }  
-		        else
-				{
-					if(size>16)//×Ö¿âÖĞÃ»ÓĞ¼¯³É12X24 16X32µÄÓ¢ÎÄ×ÖÌå,ÓÃ8X16´úÌæ
-					{  
-					LCD_ShowChar(x,y,fc,bc,*str,16,mode);
-					x+=8; //×Ö·û,ÎªÈ«×ÖµÄÒ»°ë 
-					}
-					else
-					{
-					LCD_ShowChar(x,y,fc,bc,*str,size,mode);
-					x+=size/2; //×Ö·û,ÎªÈ«×ÖµÄÒ»°ë 
-					}
-				} 
-				str++; 
-		        
-	        }
-        }else//ÖĞÎÄ 
-        {   
-			if(x>(lcddev.width-size)||y>(lcddev.height-size)) 
-			return;  
-            bHz=0;//ÓĞºº×Ö¿â    
-			if(size==32)
-			GUI_DrawFont32(x,y,fc,bc,str,mode);	 	
-			else if(size==24)
-			GUI_DrawFont24(x,y,fc,bc,str,mode);	
-			else
-			GUI_DrawFont16(x,y,fc,bc,str,mode);
-				
-	        str+=2; 
-	        x+=size;//ÏÂÒ»¸öºº×ÖÆ«ÒÆ	    
-        }						 
-    }   
+  LCD_SetWindows(0, 0, lcddev.width - 1, lcddev.height - 1); // æ¢å¤çª—å£ä¸ºå…¨å±
 }
 
 /*****************************************************************************
- * @name       :void Gui_StrCenter(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,uint8_t size,uint8_t mode)
- * @date       :2018-08-09 
+ * @name       :void Show_Str(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+uint8_t *str,uint8_t size,uint8_t mode)
+ * @date       :2018-08-09
+ * @function   :Display Chinese and English strings
+ * @parameters :x:the bebinning x coordinate of the Chinese and English strings
+                y:the bebinning y coordinate of the Chinese and English strings
+                                                                fc:the color
+value of Chinese and English strings bc:the background color of Chinese and
+English strings str:the start address of the Chinese and English strings
+                                                                size:the size of
+Chinese and English strings mode:0-no overlying,1-overlying
+ * @retvalue   :None
+******************************************************************************/
+void Show_Str(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,
+              uint8_t size, uint8_t mode) {
+  uint16_t x0 = x;
+  uint8_t bHz = 0;  // å­—ç¬¦æˆ–è€…ä¸­æ–‡
+  while (*str != 0) // æ•°æ®æœªç»“æŸ
+  {
+    if (!bHz) {
+      if (x > (lcddev.width - size / 2) || y > (lcddev.height - size))
+        return;
+      if (*str > 0x80)
+        bHz = 1; // ä¸­æ–‡
+      else       // å­—ç¬¦
+      {
+        if (*str == 0x0D) // æ¢è¡Œç¬¦å·
+        {
+          y += size;
+          x = x0;
+          str++;
+        } else {
+          if (size > 16) // å­—åº“ä¸­æ²¡æœ‰é›†æˆ12X24 16X32çš„è‹±æ–‡å­—ä½“,ç”¨8X16ä»£æ›¿
+          {
+            LCD_ShowChar(x, y, fc, bc, *str, 16, mode);
+            x += 8; // å­—ç¬¦,ä¸ºå…¨å­—çš„ä¸€åŠ
+          } else {
+            LCD_ShowChar(x, y, fc, bc, *str, size, mode);
+            x += size / 2; // å­—ç¬¦,ä¸ºå…¨å­—çš„ä¸€åŠ
+          }
+        }
+        str++;
+      }
+    } else // ä¸­æ–‡
+    {
+      if (x > (lcddev.width - size) || y > (lcddev.height - size))
+        return;
+      bHz = 0; // æœ‰æ±‰å­—åº“
+      if (size == 32)
+        GUI_DrawFont32(x, y, fc, bc, str, mode);
+      else if (size == 24)
+        GUI_DrawFont24(x, y, fc, bc, str, mode);
+      else
+        GUI_DrawFont16(x, y, fc, bc, str, mode);
+
+      str += 2;
+      x += size; // ä¸‹ä¸€ä¸ªæ±‰å­—åç§»
+    }
+  }
+}
+
+/*****************************************************************************
+ * @name       :void Gui_StrCenter(uint16_t x, uint16_t y, uint16_t fc, uint16_t
+bc, uint8_t *str,uint8_t size,uint8_t mode)
+ * @date       :2018-08-09
  * @function   :Centered display of English and Chinese strings
  * @parameters :x:the bebinning x coordinate of the Chinese and English strings
                 y:the bebinning y coordinate of the Chinese and English strings
-								fc:the color value of Chinese and English strings
-								bc:the background color of Chinese and English strings
-								str:the start address of the Chinese and English strings
-								size:the size of Chinese and English strings
-								mode:0-no overlying,1-overlying
+                                                                fc:the color
+value of Chinese and English strings bc:the background color of Chinese and
+English strings str:the start address of the Chinese and English strings
+                                                                size:the size of
+Chinese and English strings mode:0-no overlying,1-overlying
  * @retvalue   :None
-******************************************************************************/ 
-void Gui_StrCenter(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc, uint8_t *str,uint8_t size,uint8_t mode)
-{
-	uint16_t len=strlen((const char *)str);
-	uint16_t x1=(lcddev.width-len*8)/2;
-	Show_Str(x1,y,fc,bc,str,size,mode);
-} 
- 
+******************************************************************************/
+void Gui_StrCenter(uint16_t x, uint16_t y, uint16_t fc, uint16_t bc,
+                   uint8_t *str, uint8_t size, uint8_t mode) {
+  uint16_t len = strlen((const char *)str);
+  uint16_t x1 = (lcddev.width - len * 8) / 2;
+  Show_Str(x1, y, fc, bc, str, size, mode);
+}
+
 /*****************************************************************************
  * @name       :void Gui_Drawbmp16(uint16_t x,uint16_t y,const unsigned char *p)
- * @date       :2018-08-09 
+ * @date       :2018-08-09
  * @function   :Display a 16-bit BMP image
  * @parameters :x:the bebinning x coordinate of the BMP image
                 y:the bebinning y coordinate of the BMP image
-								p:the start address of image array
+                                                                p:the start
+address of image array
  * @retvalue   :None
-******************************************************************************/ 
-void Gui_Drawbmp16(uint16_t x,uint16_t y,const unsigned char *p) //ÏÔÊ¾40*40 QQÍ¼Æ¬
+******************************************************************************/
+void Gui_Drawbmp16(uint16_t x, uint16_t y,
+                   const unsigned char *p) // æ˜¾ç¤º40*40 QQå›¾ç‰‡
 {
-  	int i; 
-	unsigned char picH,picL; 
-	LCD_SetWindows(x,y,x+40-1,y+40-1);//´°¿ÚÉèÖÃ
-    for(i=0;i<40*40;i++)
-	{	
-	 	picL=*(p+i*2);	//Êı¾İµÍÎ»ÔÚÇ°
-		picH=*(p+i*2+1);				
-		Lcd_WriteData_16Bit(picH<<8|picL);  						
-	}	
-	LCD_SetWindows(0,0,lcddev.width-1,lcddev.height-1);//»Ö¸´ÏÔÊ¾´°¿ÚÎªÈ«ÆÁ	
+  int i;
+  unsigned char picH, picL;
+  LCD_SetWindows(x, y, x + 40 - 1, y + 40 - 1); // çª—å£è®¾ç½®
+  for (i = 0; i < 40 * 40; i++) {
+    picL = *(p + i * 2); // æ•°æ®ä½ä½åœ¨å‰
+    picH = *(p + i * 2 + 1);
+    Lcd_WriteData_16Bit(picH << 8 | picL);
+  }
+  LCD_SetWindows(0, 0, lcddev.width - 1,
+                 lcddev.height - 1); // æ¢å¤æ˜¾ç¤ºçª—å£ä¸ºå…¨å±
 }

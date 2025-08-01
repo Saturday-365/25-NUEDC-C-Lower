@@ -14,6 +14,7 @@
 #include "SA_Usart.h"
 #include "SA_Flash.h"
 #include "SA_ADC.h"
+#include "SA_Key.h"
 #include "lcd.h"
 #include "GUI.h"
 #include "HMI.h"

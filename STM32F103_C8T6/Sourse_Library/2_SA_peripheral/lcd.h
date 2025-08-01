@@ -1,200 +1,212 @@
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//²âÊÔÓ²¼þ£ºµ¥Æ¬»úSTM32F407ZGT6,ÕýµãÔ­×ÓExplorer STM32F4¿ª·¢°å,Ö÷Æµ168MHZ£¬¾§Õñ12MHZ
-//QDtech-TFTÒº¾§Çý¶¯ for STM32 IOÄ£Äâ
-//xiao·ë@ShenZhen QDtech co.,LTD
-//¹«Ë¾ÍøÕ¾:www.qdtft.com
-//ÌÔ±¦ÍøÕ¾£ºhttp://qdtech.taobao.com
-//wiki¼¼ÊõÍøÕ¾£ºhttp://www.lcdwiki.com
-//ÎÒË¾Ìá¹©¼¼ÊõÖ§³Ö£¬ÈÎºÎ¼¼ÊõÎÊÌâ»¶Ó­ËæÊ±½»Á÷Ñ§Ï°
-//¹Ì»°(´«Õæ) :+86 0755-23594567 
-//ÊÖ»ú:15989313508£¨·ë¹¤£© 
-//ÓÊÏä:lcdwiki01@gmail.com    support@lcdwiki.com    goodtft@163.com 
-//¼¼ÊõÖ§³ÖQQ:3002773612  3002778157
-//¼¼Êõ½»Á÷QQÈº:324828016
-//´´½¨ÈÕÆÚ:2018/08/22
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ÉîÛÚÊÐÈ«¶¯µç×Ó¼¼ÊõÓÐÏÞ¹«Ë¾ 2018-2028
-//All rights reserved
+//////////////////////////////////////////////////////////////////////////////////
+// æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºŽå…¶å®ƒä»»ä½•ç”¨é€”
+// æµ‹è¯•ç¡¬ä»¶ï¼šå•ç‰‡æœºSTM32F407ZGT6,æ­£ç‚¹åŽŸå­Explorer
+// STM32F4å¼€å‘æ¿,ä¸»é¢‘168MHZï¼Œæ™¶æŒ¯12MHZ QDtech-TFTæ¶²æ™¶é©±åŠ¨ for STM32 IOæ¨¡æ‹Ÿ
+// xiaoå†¯@ShenZhen QDtech co.,LTD
+// å…¬å¸ç½‘ç«™:www.qdtft.com
+// æ·˜å®ç½‘ç«™ï¼šhttp://qdtech.taobao.com
+// wikiæŠ€æœ¯ç½‘ç«™ï¼šhttp://www.lcdwiki.com
+// æˆ‘å¸æä¾›æŠ€æœ¯æ”¯æŒï¼Œä»»ä½•æŠ€æœ¯é—®é¢˜æ¬¢è¿Žéšæ—¶äº¤æµå­¦ä¹ 
+// å›ºè¯(ä¼ çœŸ) :+86 0755-23594567
+// æ‰‹æœº:15989313508ï¼ˆå†¯å·¥ï¼‰
+// é‚®ç®±:lcdwiki01@gmail.com    support@lcdwiki.com    goodtft@163.com
+// æŠ€æœ¯æ”¯æŒQQ:3002773612  3002778157
+// æŠ€æœ¯äº¤æµQQç¾¤:324828016
+// åˆ›å»ºæ—¥æœŸ:2018/08/22
+// ç‰ˆæœ¬ï¼šV1.0
+// ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+// Copyright(C) æ·±åœ³å¸‚å…¨åŠ¨ç”µå­æŠ€æœ¯æœ‰é™å…¬å¸ 2018-2028
+// All rights reserved
 /****************************************************************************************************
-//=========================================µçÔ´½ÓÏß================================================//
-//     LCDÄ£¿é                STM32µ¥Æ¬»ú
-//      VCC          ½Ó          3.3V         //µçÔ´
-//      GND          ½Ó          GND          //µçÔ´µØ
-//=======================================Òº¾§ÆÁÊý¾ÝÏß½ÓÏß==========================================//
-//±¾Ä£¿éÄ¬ÈÏÊý¾Ý×ÜÏßÀàÐÍÎª4ÏßÖÆSPI×ÜÏß
-//     LCDÄ£¿é                STM32µ¥Æ¬»ú    
-//       SDA         ½Ó          PB5          //Òº¾§ÆÁSPI×ÜÏßÊý¾ÝÐ´ÐÅºÅ
-//=======================================Òº¾§ÆÁ¿ØÖÆÏß½ÓÏß==========================================//
-//     LCDÄ£¿é 					      STM32µ¥Æ¬»ú 
-//       BLK         ½Ó          PB13         //Òº¾§ÆÁ±³¹â¿ØÖÆÐÅºÅ£¬Èç¹û²»ÐèÒª¿ØÖÆ£¬½Ó3.3V
-//       SCL         ½Ó          PB3          //Òº¾§ÆÁSPI×ÜÏßÊ±ÖÓÐÅºÅ
-//       DC          ½Ó          PB14         //Òº¾§ÆÁÊý¾Ý/ÃüÁî¿ØÖÆÐÅºÅ
-//       RES         ½Ó          PB12         //Òº¾§ÆÁ¸´Î»¿ØÖÆÐÅºÅ
-//       CS          ½Ó          PB15         //Òº¾§ÆÁÆ¬Ñ¡¿ØÖÆÐÅºÅ
-//=========================================´¥ÃþÆÁ´¥½ÓÏß=========================================//
-//Èç¹ûÄ£¿é²»´ø´¥Ãþ¹¦ÄÜ»òÕß´øÓÐ´¥Ãþ¹¦ÄÜ£¬µ«ÊÇ²»ÐèÒª´¥Ãþ¹¦ÄÜ£¬Ôò²»ÐèÒª½øÐÐ´¥ÃþÆÁ½ÓÏß
-//	   LCDÄ£¿é                STM32µ¥Æ¬»ú 
-//      T_IRQ        ½Ó          PB1          //´¥ÃþÆÁ´¥ÃþÖÐ¶ÏÐÅºÅ
-//      T_DO         ½Ó          PB2          //´¥ÃþÆÁSPI×ÜÏß¶ÁÐÅºÅ
-//      T_DIN        ½Ó          PF11         //´¥ÃþÆÁSPI×ÜÏßÐ´ÐÅºÅ
-//      T_CS         ½Ó          PC5          //´¥ÃþÆÁÆ¬Ñ¡¿ØÖÆÐÅºÅ
-//      T_CLK        ½Ó          PB0          //´¥ÃþÆÁSPI×ÜÏßÊ±ÖÓÐÅºÅ
-**************************************************************************************************/		
- /* @attention
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-**************************************************************************************************/	
+//=========================================ç”µæºæŽ¥çº¿================================================//
+//     LCDæ¨¡å—                STM32å•ç‰‡æœº
+//      VCC          æŽ¥          3.3V         //ç”µæº
+//      GND          æŽ¥          GND          //ç”µæºåœ°
+//=======================================æ¶²æ™¶å±æ•°æ®çº¿æŽ¥çº¿==========================================//
+//æœ¬æ¨¡å—é»˜è®¤æ•°æ®æ€»çº¿ç±»åž‹ä¸º4çº¿åˆ¶SPIæ€»çº¿
+//     LCDæ¨¡å—                STM32å•ç‰‡æœº
+//       SDA         æŽ¥          PB5          //æ¶²æ™¶å±SPIæ€»çº¿æ•°æ®å†™ä¿¡å·
+//=======================================æ¶²æ™¶å±æŽ§åˆ¶çº¿æŽ¥çº¿==========================================//
+//     LCDæ¨¡å— 					      STM32å•ç‰‡æœº
+//       BLK         æŽ¥          PB13
+//æ¶²æ™¶å±èƒŒå…‰æŽ§åˆ¶ä¿¡å·ï¼Œå¦‚æžœä¸éœ€è¦æŽ§åˆ¶ï¼ŒæŽ¥3.3V
+//       SCL         æŽ¥          PB3          //æ¶²æ™¶å±SPIæ€»çº¿æ—¶é’Ÿä¿¡å·
+//       DC          æŽ¥          PB14         //æ¶²æ™¶å±æ•°æ®/å‘½ä»¤æŽ§åˆ¶ä¿¡å·
+//       RES         æŽ¥          PB12         //æ¶²æ™¶å±å¤ä½æŽ§åˆ¶ä¿¡å·
+//       CS          æŽ¥          PB15         //æ¶²æ™¶å±ç‰‡é€‰æŽ§åˆ¶ä¿¡å·
+//=========================================è§¦æ‘¸å±è§¦æŽ¥çº¿=========================================//
+//å¦‚æžœæ¨¡å—ä¸å¸¦è§¦æ‘¸åŠŸèƒ½æˆ–è€…å¸¦æœ‰è§¦æ‘¸åŠŸèƒ½ï¼Œä½†æ˜¯ä¸éœ€è¦è§¦æ‘¸åŠŸèƒ½ï¼Œåˆ™ä¸éœ€è¦è¿›è¡Œè§¦æ‘¸å±æŽ¥çº¿
+//	   LCDæ¨¡å—                STM32å•ç‰‡æœº
+//      T_IRQ        æŽ¥          PB1          //è§¦æ‘¸å±è§¦æ‘¸ä¸­æ–­ä¿¡å·
+//      T_DO         æŽ¥          PB2          //è§¦æ‘¸å±SPIæ€»çº¿è¯»ä¿¡å·
+//      T_DIN        æŽ¥          PF11         //è§¦æ‘¸å±SPIæ€»çº¿å†™ä¿¡å·
+//      T_CS         æŽ¥          PC5          //è§¦æ‘¸å±ç‰‡é€‰æŽ§åˆ¶ä¿¡å·
+//      T_CLK        æŽ¥          PB0          //è§¦æ‘¸å±SPIæ€»çº¿æ—¶é’Ÿä¿¡å·
+**************************************************************************************************/
+/* @attention
+ *
+ * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+ * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+ * TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
+ * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+ * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+ * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+ **************************************************************************************************/
 #ifndef __LCD_H
-#define __LCD_H		
-#include "main.h"	 
+#define __LCD_H
+#include "main.h"
 #include "stdlib.h"
 
-//LCDÖØÒª²ÎÊý¼¯
-typedef struct  
-{										    
-	uint16_t width;			//LCD ¿í¶È
-	uint16_t height;			//LCD ¸ß¶È
-	uint16_t id;				//LCD ID
-	uint8_t  dir;			//ºáÆÁ»¹ÊÇÊúÆÁ¿ØÖÆ£º0£¬ÊúÆÁ£»1£¬ºáÆÁ¡£	
-	uint16_t	 wramcmd;		//¿ªÊ¼Ð´gramÖ¸Áî
-	uint16_t  setxcmd;		//ÉèÖÃx×ø±êÖ¸Áî
-	uint16_t  setycmd;		//ÉèÖÃy×ø±êÖ¸Áî	
-}_lcd_dev; 	
+// LCDé‡è¦å‚æ•°é›†
+typedef struct {
+  uint16_t width;   // LCD å®½åº¦
+  uint16_t height;  // LCD é«˜åº¦
+  uint16_t id;      // LCD ID
+  uint8_t dir;      // æ¨ªå±è¿˜æ˜¯ç«–å±æŽ§åˆ¶ï¼š0ï¼Œç«–å±ï¼›1ï¼Œæ¨ªå±ã€‚
+  uint16_t wramcmd; // å¼€å§‹å†™gramæŒ‡ä»¤
+  uint16_t setxcmd; // è®¾ç½®xåæ ‡æŒ‡ä»¤
+  uint16_t setycmd; // è®¾ç½®yåæ ‡æŒ‡ä»¤
+} _lcd_dev;
 
-//LCD²ÎÊý
-extern _lcd_dev lcddev;	//¹ÜÀíLCDÖØÒª²ÎÊý
-/////////////////////////////////////ÓÃ»§ÅäÖÃÇø///////////////////////////////////	 
-#define USE_HORIZONTAL  	 0 //¶¨ÒåÒº¾§ÆÁË³Ê±ÕëÐý×ª·½Ïò 	0-0¶ÈÐý×ª£¬1-90¶ÈÐý×ª£¬2-180¶ÈÐý×ª£¬3-270¶ÈÐý×ª
+// LCDå‚æ•°
+extern _lcd_dev lcddev; // ç®¡ç†LCDé‡è¦å‚æ•°
+/////////////////////////////////////ç”¨æˆ·é…ç½®åŒº///////////////////////////////////
+#define USE_HORIZONTAL                                                         \
+  0 // å®šä¹‰æ¶²æ™¶å±é¡ºæ—¶é’ˆæ—‹è½¬æ–¹å‘
+    // 0-0åº¦æ—‹è½¬ï¼Œ1-90åº¦æ—‹è½¬ï¼Œ2-180åº¦æ—‹è½¬ï¼Œ3-270åº¦æ—‹è½¬
 
-//////////////////////////////////////////////////////////////////////////////////	  
-//¶¨ÒåLCDµÄ³ß´ç
+//////////////////////////////////////////////////////////////////////////////////
+// å®šä¹‰LCDçš„å°ºå¯¸
 #define LCD_W 240
 #define LCD_H 320
 
-//TFTLCD²¿·ÖÍâÒªµ÷ÓÃµÄº¯Êý		   
-extern uint16_t  POINT_COLOR;//Ä¬ÈÏºìÉ«    
-extern uint16_t  BACK_COLOR; //±³¾°ÑÕÉ«.Ä¬ÈÏÎª°×É«
+// TFTLCDéƒ¨åˆ†å¤–è¦è°ƒç”¨çš„å‡½æ•°
+extern uint16_t POINT_COLOR; // é»˜è®¤çº¢è‰²
+extern uint16_t BACK_COLOR;  // èƒŒæ™¯é¢œè‰².é»˜è®¤ä¸ºç™½è‰²
 
 ////////////////////////////////////////////////////////////////////
-//-----------------LCD¶Ë¿Ú¶¨Òå---------------- 
+//-----------------LCDç«¯å£å®šä¹‰----------------
 
-#define LED  13        //±³¹â¿ØÖÆÒý½Å
-#define CS   15       //Æ¬Ñ¡Òý½Å
-#define RS   14       //¼Ä´æÆ÷/Êý¾ÝÑ¡ÔñÒý½Å  
-#define RST  12       //¸´Î»Òý½Å
+#define LED 13 // èƒŒå…‰æŽ§åˆ¶å¼•è„š
+#define CS 15  // ç‰‡é€‰å¼•è„š
+#define RS 14  // å¯„å­˜å™¨/æ•°æ®é€‰æ‹©å¼•è„š
+#define RST 12 // å¤ä½å¼•è„š
 
-//QDtechÈ«ÏµÁÐÄ£¿é²ÉÓÃÁËÈý¼«¹Ü¿ØÖÆ±³¹âÁÁÃð£¬ÓÃ»§Ò²¿ÉÒÔ½ÓPWMµ÷½Ú±³¹âÁÁ¶È
-#define	LCD_LED PBout(LED) //LCD±³¹â    		 
-#define LCD_CS  PBout(CS)
-#define LCD_RS  PBout(RS)
+// QDtechå…¨ç³»åˆ—æ¨¡å—é‡‡ç”¨äº†ä¸‰æžç®¡æŽ§åˆ¶èƒŒå…‰äº®ç­ï¼Œç”¨æˆ·ä¹Ÿå¯ä»¥æŽ¥PWMè°ƒèŠ‚èƒŒå…‰äº®åº¦
+#define LCD_LED PBout(LED) // LCDèƒŒå…‰
+#define LCD_CS PBout(CS)
+#define LCD_RS PBout(RS)
 #define LCD_RST PBout(RST)
-//Èç¹ûÊ¹ÓÃ¹Ù·½¿âº¯Êý¶¨ÒåÏÂÁÐµ×²ã£¬ËÙ¶È½«»áÏÂ½µµ½14Ö¡Ã¿Ãë£¬½¨Òé²ÉÓÃÎÒË¾ÍÆ¼ö·½·¨
-//ÒÔÏÂIO¶¨ÒåÖ±½Ó²Ù×÷¼Ä´æÆ÷£¬¿ìËÙIO²Ù×÷£¬Ë¢ÆÁËÙÂÊ¿ÉÒÔ´ïµ½28Ö¡Ã¿Ãë£¡ 
+// å¦‚æžœä½¿ç”¨å®˜æ–¹åº“å‡½æ•°å®šä¹‰ä¸‹åˆ—åº•å±‚ï¼Œé€Ÿåº¦å°†ä¼šä¸‹é™åˆ°14å¸§æ¯ç§’ï¼Œå»ºè®®é‡‡ç”¨æˆ‘å¸æŽ¨èæ–¹æ³•
+// ä»¥ä¸‹IOå®šä¹‰ç›´æŽ¥æ“ä½œå¯„å­˜å™¨ï¼Œå¿«é€ŸIOæ“ä½œï¼Œåˆ·å±é€ŸçŽ‡å¯ä»¥è¾¾åˆ°28å¸§æ¯ç§’ï¼
 
-#define	LCD_CS_SET  HAL_GPIO_WritePin(IPS_CS_GPIO_Port, IPS_CS_Pin, GPIO_PIN_SET);//LCD_CS=1 //GPIO_TYPE->BSRRL=1<<LCD_CS    //Æ¬Ñ¡¶Ë¿Ú  	PB11
-#define	LCD_RS_SET	HAL_GPIO_WritePin(IPS_DC_GPIO_Port, IPS_DC_Pin, GPIO_PIN_SET);//LCD_RS=1 //GPIO_TYPE->BSRRL=1<<LCD_RS    //Êý¾Ý/ÃüÁî  PB10	  
-#define	LCD_RST_SET	HAL_GPIO_WritePin(IPS_RES_GPIO_Port, IPS_RES_Pin, GPIO_PIN_SET);//LCD_RST=1 //GPIO_TYPE->BSRRL=1<<LCD_RST    //¸´Î»			PB12
+#define LCD_CS_SET                                                             \
+  HAL_GPIO_WritePin(IPS_CS_GPIO_Port, IPS_CS_Pin,                              \
+                    GPIO_PIN_SET); // LCD_CS=1 //GPIO_TYPE->BSRRL=1<<LCD_CS
+                                   // //ç‰‡é€‰ç«¯å£  	PB11
+#define LCD_RS_SET                                                             \
+  HAL_GPIO_WritePin(IPS_DC_GPIO_Port, IPS_DC_Pin,                              \
+                    GPIO_PIN_SET); // LCD_RS=1 //GPIO_TYPE->BSRRL=1<<LCD_RS
+                                   // //æ•°æ®/å‘½ä»¤  PB10
+#define LCD_RST_SET                                                            \
+  HAL_GPIO_WritePin(IPS_RES_GPIO_Port, IPS_RES_Pin,                            \
+                    GPIO_PIN_SET); // LCD_RST=1 //GPIO_TYPE->BSRRL=1<<LCD_RST
+                                   // //å¤ä½			PB12
 
- 							    
-#define	LCD_CS_CLR  HAL_GPIO_WritePin(IPS_CS_GPIO_Port, IPS_CS_Pin, GPIO_PIN_RESET);//LCD_CS=0 //GPIO_TYPE->BSRRH=1<<LCD_CS     //Æ¬Ñ¡¶Ë¿Ú  	PB11
-#define	LCD_RS_CLR	HAL_GPIO_WritePin(IPS_DC_GPIO_Port, IPS_DC_Pin, GPIO_PIN_RESET);//LCD_RS=0 //GPIO_TYPE->BSRRH=1<<LCD_RS     //Êý¾Ý/ÃüÁî  PB10	 
-#define	LCD_RST_CLR	HAL_GPIO_WritePin(IPS_RES_GPIO_Port, IPS_RES_Pin, GPIO_PIN_RESET);//LCD_RST=0 //GPIO_TYPE->BSRRH=1<<LCD_RST    //¸´Î»			  PB12
+#define LCD_CS_CLR                                                             \
+  HAL_GPIO_WritePin(IPS_CS_GPIO_Port, IPS_CS_Pin,                              \
+                    GPIO_PIN_RESET); // LCD_CS=0 //GPIO_TYPE->BSRRH=1<<LCD_CS
+                                     // //ç‰‡é€‰ç«¯å£  	PB11
+#define LCD_RS_CLR                                                             \
+  HAL_GPIO_WritePin(IPS_DC_GPIO_Port, IPS_DC_Pin,                              \
+                    GPIO_PIN_RESET); // LCD_RS=0 //GPIO_TYPE->BSRRH=1<<LCD_RS
+                                     // //æ•°æ®/å‘½ä»¤  PB10
+#define LCD_RST_CLR                                                            \
+  HAL_GPIO_WritePin(IPS_RES_GPIO_Port, IPS_RES_Pin,                            \
+                    GPIO_PIN_RESET); // LCD_RST=0 //GPIO_TYPE->BSRRH=1<<LCD_RST
+                                     // //å¤ä½			  PB12
 
-				
+// ç”»ç¬”é¢œè‰²
+#define WHITE 0xFFFF
+#define BLACK 0x0000
+#define BLUE 0x001F
+#define BRED 0XF81F
+#define GRED 0XFFE0
+#define GBLUE 0X07FF
+#define RED 0xF800
+#define MAGENTA 0xF81F
+#define GREEN 0x07E0
+#define CYAN 0x7FFF
+#define YELLOW 0xFFE0
+#define BROWN 0XBC40 // æ£•è‰²
+#define BRRED 0XFC07 // æ£•çº¢è‰²
+#define GRAY 0X8430  // ç°è‰²
+#define GRAY0 0xEF7D
+#define GRAY1 0x8410 // ç°è‰²1      00000 000000 00000
+#define GRAY2 0x4208
+// GUIé¢œè‰²
 
+#define DARKBLUE 0X01CF  // æ·±è“è‰²
+#define LIGHTBLUE 0X7D7C // æµ…è“è‰²
+#define GRAYBLUE 0X5458  // ç°è“è‰²
+// ä»¥ä¸Šä¸‰è‰²ä¸ºPANELçš„é¢œè‰²
 
-//»­±ÊÑÕÉ«
-#define WHITE       0xFFFF
-#define BLACK      	0x0000	  
-#define BLUE       	0x001F  
-#define BRED        0XF81F
-#define GRED 			 	0XFFE0
-#define GBLUE			 	0X07FF
-#define RED         0xF800
-#define MAGENTA     0xF81F
-#define GREEN       0x07E0
-#define CYAN        0x7FFF
-#define YELLOW      0xFFE0
-#define BROWN 			0XBC40 //×ØÉ«
-#define BRRED 			0XFC07 //×ØºìÉ«
-#define GRAY  			0X8430 //»ÒÉ«
-#define GRAY0       0xEF7D 
-#define GRAY1       0x8410      	//»ÒÉ«1      00000 000000 00000
-#define GRAY2       0x4208 
-//GUIÑÕÉ«
+#define LIGHTGREEN 0X841F // æµ…ç»¿è‰²
+#define LIGHTGRAY 0XEF5B  // æµ…ç°è‰²(PANNEL)
+#define LGRAY 0XC618      // æµ…ç°è‰²(PANNEL),çª—ä½“èƒŒæ™¯è‰²
 
-#define DARKBLUE      	 0X01CF	//ÉîÀ¶É«
-#define LIGHTBLUE      	 0X7D7C	//Ç³À¶É«  
-#define GRAYBLUE       	 0X5458 //»ÒÀ¶É«
-//ÒÔÉÏÈýÉ«ÎªPANELµÄÑÕÉ« 
- 
-#define LIGHTGREEN     	0X841F //Ç³ÂÌÉ«
-#define LIGHTGRAY     0XEF5B //Ç³»ÒÉ«(PANNEL)
-#define LGRAY 			 		0XC618 //Ç³»ÒÉ«(PANNEL),´°Ìå±³¾°É«
+#define LGRAYBLUE 0XA651 // æµ…ç°è“è‰²(ä¸­é—´å±‚é¢œè‰²)
+#define LBBLUE 0X2B12    // æµ…æ£•è“è‰²(é€‰æ‹©æ¡ç›®çš„åè‰²)
 
-#define LGRAYBLUE      	0XA651 //Ç³»ÒÀ¶É«(ÖÐ¼ä²ãÑÕÉ«)
-#define LBBLUE          0X2B12 //Ç³×ØÀ¶É«(Ñ¡ÔñÌõÄ¿µÄ·´É«)
-	    															  
 void LCD_Init(void);
 void LCD_DisplayOn(void);
 void LCD_DisplayOff(void);
-void LCD_Clear(uint16_t Color);	 
+void LCD_Clear(uint16_t Color);
 void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos);
-void LCD_DrawPoint(uint16_t x,uint16_t y);//»­µã
-uint16_t  LCD_ReadPoint(uint16_t x,uint16_t y); //¶Áµã
+void LCD_DrawPoint(uint16_t x, uint16_t y);     // ç”»ç‚¹
+uint16_t LCD_ReadPoint(uint16_t x, uint16_t y); // è¯»ç‚¹
 void LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
-void LCD_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);		   
-void LCD_SetWindows(uint16_t xStar, uint16_t yStar,uint16_t xEnd,uint16_t yEnd);
+void LCD_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+void LCD_SetWindows(uint16_t xStar, uint16_t yStar, uint16_t xEnd,
+                    uint16_t yEnd);
 
-uint16_t LCD_RD_DATA(void);//¶ÁÈ¡LCDÊý¾Ý									    
+uint16_t LCD_RD_DATA(void); // è¯»å–LCDæ•°æ®
 void LCD_WriteReg(uint8_t LCD_Reg, uint16_t LCD_RegValue);
 void LCD_WR_DATA(uint8_t data);
 uint16_t LCD_ReadReg(uint8_t LCD_Reg);
 void LCD_WriteRAM_Prepare(void);
 void LCD_WriteRAM(uint16_t RGB_Code);
-uint16_t LCD_ReadRAM(void);		   
+uint16_t LCD_ReadRAM(void);
 uint16_t LCD_BGR2RGB(uint16_t c);
 void LCD_SetParam(void);
 void Lcd_WriteData_16Bit(uint16_t Data);
-void LCD_direction(uint8_t direction );
+void LCD_direction(uint8_t direction);
 
-//Èç¹ûÈÔÈ»¾õµÃËÙ¶È²»¹»¿ì£¬¿ÉÒÔÊ¹ÓÃÏÂÃæµÄºê¶¨Òå,Ìá¸ßËÙ¶È.
-//×¢ÒâÒªÈ¥µôlcd.cÖÐvoid LCD_WR_DATA(uint16_t data)º¯Êý¶¨ÒåÅ¶
+// å¦‚æžœä»ç„¶è§‰å¾—é€Ÿåº¦ä¸å¤Ÿå¿«ï¼Œå¯ä»¥ä½¿ç”¨ä¸‹é¢çš„å®å®šä¹‰,æé«˜é€Ÿåº¦.
+// æ³¨æ„è¦åŽ»æŽ‰lcd.cä¸­void LCD_WR_DATA(uint16_t data)å‡½æ•°å®šä¹‰å“¦
 /*
-#if LCD_USE8BIT_MODEL==1//Ê¹ÓÃ8Î»²¢ÐÐÊý¾Ý×ÜÏßÄ£Ê½
-	#define LCD_WR_DATA(data){\
-	LCD_RS_SET;\
-	LCD_CS_CLR;\
-	DATAOUT(data);\
-	LCD_WR_CLR;\
-	LCD_WR_SET;\
-	DATAOUT(data<<8);\
-	LCD_WR_CLR;\
-	LCD_WR_SET;\
-	LCD_CS_SET;\
-	}
-	#else//Ê¹ÓÃ16Î»²¢ÐÐÊý¾Ý×ÜÏßÄ£Ê½
-	#define LCD_WR_DATA(data){\
-	LCD_RS_SET;\
-	LCD_CS_CLR;\
-	DATAOUT(data);\
-	LCD_WR_CLR;\
-	LCD_WR_SET;\
-	LCD_CS_SET;\
-	} 	
+#if LCD_USE8BIT_MODEL==1//ä½¿ç”¨8ä½å¹¶è¡Œæ•°æ®æ€»çº¿æ¨¡å¼
+        #define LCD_WR_DATA(data){\
+        LCD_RS_SET;\
+        LCD_CS_CLR;\
+        DATAOUT(data);\
+        LCD_WR_CLR;\
+        LCD_WR_SET;\
+        DATAOUT(data<<8);\
+        LCD_WR_CLR;\
+        LCD_WR_SET;\
+        LCD_CS_SET;\
+        }
+        #else//ä½¿ç”¨16ä½å¹¶è¡Œæ•°æ®æ€»çº¿æ¨¡å¼
+        #define LCD_WR_DATA(data){\
+        LCD_RS_SET;\
+        LCD_CS_CLR;\
+        DATAOUT(data);\
+        LCD_WR_CLR;\
+        LCD_WR_SET;\
+        LCD_CS_SET;\
+        }
 #endif
 */
-				  		 
-#endif  
-	 
-	 
 
-
-
+#endif
