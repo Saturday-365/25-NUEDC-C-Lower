@@ -55,6 +55,8 @@ Data_I_TypeDef Curreny_data;
 Kalman_Typedef Curreny_Kalman;
 extern uint8_t window_index;
 float a,b,c,d;
+extern float HMI_data;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -110,10 +112,9 @@ int main(void)
 //  LCD_Clear(WHITE);
     Kalman_Init(&Curreny_Kalman,0.0001,0.01);
     ADC_I_Init(&Curreny_data,100);
-    Curreny_data.Correct_parameters=(float)(1.0);//1.2545
     HAL_TIM_Base_Start_IT(&htim2);
     HAL_TIM_Base_Start_IT(&htim3);
-
+    HMI_Uart_DMA_RX_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -122,42 +123,32 @@ int main(void)
   {      
 //	HMI_Send_EveryInfo(); 
     HMI_Send_EveryInfo();
-    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.max_value);
-//	if(key_get_state(UP) == KEY_SHORT_PRESS_RELEASE)	//DOWN
-//	{
-//    a++;
-//	key_clear_state(UP);
-//	}
-//	if(key_get_state(DOWN) == KEY_SHORT_PRESS_RELEASE) //LEFT
-//	{
-//    a--;
-//	key_clear_state(DOWN);
-//	}
-//	if(key_get_state(LEFT) == KEY_SHORT_PRESS_RELEASE)  //PRESS
-//	{
-//    a+=100;
-//	key_clear_state(LEFT);
-//	}
-//	if(key_get_state(RIGHT)== KEY_SHORT_PRESS_RELEASE)   //UP
-//	{
-//    b++;
-//	key_clear_state(RIGHT);
-//	}
-//	if(key_get_state(PRESS) == KEY_SHORT_PRESS_RELEASE)	 //RIGHT
-//	{
-//    b--;
-//	key_clear_state(PRESS);
-//	}
-//    if(key_get_state(BUTTN1) == KEY_SHORT_PRESS_RELEASE )	
-//	{
-//    c--;
-//	key_clear_state(BUTTN1);
-//    } 
-      	
+//    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.max_value);
+    JustFloat_4(Info.aim_square_num,b,c,d);
+    if(HMI_key_get_state(HMI_UP)== HMI_KEY_PRESS)
+  	{
+    ADC_I_DATA(&Curreny_data,1);
+	HMI_key_clear_state(HMI_UP);
+    }
+    if(HMI_key_get_state(HMI_DOWN)== HMI_KEY_PRESS)
+  	{
+    ADC_I_DATA(&Curreny_data,2);
+	HMI_key_clear_state(HMI_DOWN);
+    }
+    if(HMI_key_get_state(HMI_UP2)== HMI_KEY_PRESS)
+  	{
+    ADC_I_DATA(&Curreny_data,3);
+	HMI_key_clear_state(HMI_UP2);
+    }
+    if(HMI_key_get_state(HMI_DOWN2)== HMI_KEY_PRESS)
+  	{
+    ADC_I_DATA(&Curreny_data,4);
+	HMI_key_clear_state(HMI_DOWN2);
+    }
     
 //    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0);  
 //    HAL_Delay(200);
-//    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)1); 
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)1); 
 //    HAL_Delay(200);
     /* USER CODE END WHILE */
 

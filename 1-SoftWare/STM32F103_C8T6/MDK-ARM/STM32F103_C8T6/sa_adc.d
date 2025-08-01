@@ -32,6 +32,8 @@ stm32f103_c8t6\sa_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 stm32f103_c8t6\sa_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 stm32f103_c8t6\sa_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 stm32f103_c8t6\sa_adc.o: ..\Sourse_Library\1_SA_Library\SA_ADC.h
+stm32f103_c8t6\sa_adc.o: ..\Sourse_Library\1_SA_Library\HMI.h
+stm32f103_c8t6\sa_adc.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdio.h
 stm32f103_c8t6\sa_adc.o: ..\Sourse_Library\1_SA_Library\SA_karman.h
 stm32f103_c8t6\sa_adc.o: ../Core/Inc/adc.h
 stm32f103_c8t6\sa_adc.o: ../Core/Inc/dma.h

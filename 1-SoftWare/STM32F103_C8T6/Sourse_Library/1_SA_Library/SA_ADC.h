@@ -9,7 +9,9 @@ typedef struct {
     float current_value_filt;  // 实时值
     float max_value;      // 最大值
     float avg_value;      // 平均值
-    float Correct_parameters;// 修正值
+    float Correct_parameters_k;// 修正值
+    float Correct_parameters_b;// 修正值
+
     uint32_t count;       // 已采集次数
     uint32_t total_count; // 设定的总采集次数
     float sum;            // 累加和，用于计算平均值
@@ -18,5 +20,6 @@ typedef struct {
 void ADC_I_Init(Data_I_TypeDef *DATA,uint32_t total_count);
 float Get_I_Data(void);
 uint8_t Collect_CurrentData(Data_I_TypeDef *data);
+void ADC_I_DATA(Data_I_TypeDef *DATA,uint8_t flage);
 
 #endif

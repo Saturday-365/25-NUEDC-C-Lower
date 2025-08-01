@@ -2,13 +2,16 @@
 #include "SA_Usart.h"
 #include "main.h" // Device header
 
+static HMI_key_index_enum       HMI_key_index[HMI_key_num] = HMI_KEY_LIST;
+static HMI_key_state_enum       HMI_key_state[HMI_key_num];                              // 按键状态
+
 Info_t Info = {
                .y_distance = 0,
                .x_length = 0,
                .square_num  = 0,
 
                .square_length_min = 0,
-               .aim_square_num = 0,
+               .aim_square_num = 2,
                .tar_square_num = 0,
 
                .current_rlt = 0,
@@ -18,6 +21,9 @@ Info_t Info = {
                .power_rlt = 0,
                .power_avg = 0,
                .power_max = 0,
+    
+    .parameters_k= 0,
+    .parameters_b= 0,
 };
 /**************************************************************************
 函数简介    显示所有参数
@@ -46,7 +52,10 @@ void HMI_Send_EveryInfo(void) {
   HMI_send_number("power_rlt.val", Info.power_rlt);
   /* PM 最大功率 */  
   HMI_send_number("power_max.val", Info.power_max);
-  /* 电流显示波形 */ 
+  /* 电流显示波形 */
+  HMI_send_number("num_k.val", Info.parameters_k);
+  HMI_send_number("num_b.val", Info.parameters_b);
+  HMI_send_number("aim_squre_num.val",Info.aim_square_num);  
   HMI_VOFA("vofa", Info.current_rlt/10);
 }
 
@@ -66,6 +75,42 @@ void HMI_VOFA(char *name, float num) {
 void HMI_GOtoPage(char *name) { 
     printf("page %s\xff\xff\xff", name); 
 }
+
+
+void HMI_key_scanner(float data)
+{
+    if(data==123) HMI_key_state[0] =HMI_KEY_PRESS;  
+    else if(data==234) HMI_key_state[1] =HMI_KEY_PRESS;        
+    else if(data==345) HMI_key_state[2] =HMI_KEY_PRESS;        
+    else if(data==456) HMI_key_state[3] =HMI_KEY_PRESS;        
+    else if(data==567) HMI_key_state[4] =HMI_KEY_PRESS;  
+    else if(data==678) HMI_key_state[5] =HMI_KEY_PRESS;           
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+// 函数简介     获取按键状态
+// 参数说明     key_n           按键索引
+// 返回参数     key_state_enum  按键状态
+// 使用示例     key_get_state(KEY_1);
+//-------------------------------------------------------------------------------------------------------------------
+HMI_key_state_enum HMI_key_get_state(HMI_key_index_enum key_n)
+{
+    return HMI_key_state[key_n];
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+// 函数简介     清除对应按键状态
+// 参数说明     key_n           按键索引
+// 返回参数     void            无
+// 使用示例     key_clear_state(KEY_1);
+//-------------------------------------------------------------------------------------------------------------------
+void HMI_key_clear_state(HMI_key_index_enum key_n)
+{
+        HMI_key_state[key_n] = HMI_KEY_RELEASE;
+    
+}
+
 
 /*-----------------------------------------------------------------------
  if (USART_RX_BUF[0] == '1') // 0x31

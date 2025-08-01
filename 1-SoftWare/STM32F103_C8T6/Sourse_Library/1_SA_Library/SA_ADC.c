@@ -1,5 +1,6 @@
 #include "main.h"
 #include "SA_ADC.h"
+#include "HMI.h"
 #include "SA_karman.h"
 #include "adc.h"
 #include "dma.h"
@@ -17,19 +18,27 @@ void ADC_I_Init(Data_I_TypeDef *DATA,uint32_t total_count){
     DATA->max_value=0;
     DATA->avg_value=0;
     DATA->current_value=0;
-    DATA->Correct_parameters=0;
+    DATA->Correct_parameters_k=0.8498;
+    DATA->Correct_parameters_b=28.0369;
     DATA->total_count=total_count;
     DATA->count=0;
     DATA->sum=0;
     DATA->current_value_filt=0;
 }    
 
-
+void ADC_I_DATA(Data_I_TypeDef *DATA,uint8_t flage){
+    if (flage==1) DATA->Correct_parameters_k+=0.01;
+    else if (flage==2) DATA->Correct_parameters_k-=0.01;
+    else if (flage==3) DATA->Correct_parameters_b+=0.1;
+    else if (flage==4) DATA->Correct_parameters_b-=0.1;
+    
+    Info.parameters_k=DATA->Correct_parameters_k*10000;
+    Info.parameters_b=DATA->Correct_parameters_b*10000;
+    
+}    
 float Get_I_Data(void){
    HAL_ADC_Start_DMA(&hadc1,(uint32_t*)ADC_buffer,1);
    float ADC_Vol =(float) ADC_buffer[0]/(4096/(float)3.3818*40*(float)0.01); 
-    ADC_Vol=0.8498*ADC_Vol - (28.0369/1000);
-    if (ADC_Vol<=0) ADC_Vol=0;
     return ADC_Vol;
 }
 extern Kalman_Typedef Curreny_Kalman;
@@ -38,8 +47,10 @@ uint8_t Collect_CurrentData(Data_I_TypeDef *data) {
     
     // 获取当前电流值（调用现有函数）
     data->current_value=Get_I_Data();
+        data->current_value=data->Correct_parameters_k*data->current_value - (data->Correct_parameters_b/1000);
+    if (data->current_value<=0) data->current_value=0;
+
     data->current_value_filt = KalmanFilter(&Curreny_Kalman,data->current_value);
-    data->current_value_filt = data->current_value_filt*data->Correct_parameters;
 
     // 更新最大值
     if (sample_count == 0 ||data->current_value_filt > data->max_value) {

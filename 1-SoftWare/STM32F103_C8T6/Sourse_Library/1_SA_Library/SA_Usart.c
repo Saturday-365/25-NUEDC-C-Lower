@@ -5,7 +5,7 @@
 #include "main.h"
 #include "SA_Flash.h"
 #include "common.h"
-
+#include "HMI.h"
 uint8_t	RxBuffer_1[LENGTH];   //接受缓冲区 
 uint8_t RxFlag_1 = 0;       //接收完成标志；0表示接受未完成，1表示接收完成
 uint8_t	RxBuffer_3[LENGTH];   //接受缓冲区 
@@ -36,6 +36,11 @@ void RS232_Uart_Init(void)
     HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);
 //    HAL_UART_Receive_DMA(&huart3, (uint8_t *)RxBuffer_3,LENGTH);
 }
+void HMI_Uart_DMA_RX_Init(void)
+{
+    HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);
+//    HAL_UART_Receive_DMA(&huart3, (uint8_t *)RxBuffer_3,LENGTH);
+}
 
 
 void VOFA_Uart_Init(void)
@@ -46,14 +51,34 @@ void VOFA_Uart_Init(void)
 //    PID_D_VOFA(&PIDM1,uint6_cov_float(Store_Data[3]));
 //    ALLspeed=uint6_cov_float(Store_Data[4]);
 }
-
+float HMI_data=100;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回调函数
 {
 	if(huart->Instance == USART1)   //判断发生接收中断的串口
 	{
 		RxFlag_1=1;   //置为接收完成标志
-        //HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);//DMA使能接收中断  这个必须添加，否则不能再使用DMA进行发送接受
+        if (RxBuffer_1[0]=='='){
+            HMI_data = Get_Data(RxBuffer_1); 
+            HMI_key_scanner(HMI_data);
+        }
+        if (RxBuffer_1[0]=='%'&& RxBuffer_1[1]=='%'){
+//            if(RxBuffer_1[2]==0x00)  Info.aim_square_num=0;
+//            else if(RxBuffer_1[2]==0x01)  Info.aim_square_num=1;
+//            else if(RxBuffer_1[2]==0x02)  Info.aim_square_num=2;
+//            else if(RxBuffer_1[2]==0x03)  Info.aim_square_num=3;
+//            else if(RxBuffer_1[2]==0x04)  Info.aim_square_num=4;
+//            else if(RxBuffer_1[2]==0x05)  Info.aim_square_num=5;
+//            else if(RxBuffer_1[2]==0x06)  Info.aim_square_num=6;
+//            else if(RxBuffer_1[2]==0x07)  Info.aim_square_num=7;
+//            else if(RxBuffer_1[2]==0x08)  Info.aim_square_num=8;
+//            else if(RxBuffer_1[2]==0x09)  Info.aim_square_num=9;
+//            else Info.aim_square_num=2;
+            Info.aim_square_num=RxBuffer_1[2];
+        }
+
+//        HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0);  
+        HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);//DMA使能接收中断  这个必须添加，否则不能再使用DMA进行发送接受
 	}
     else RxFlag_1=0;
     
@@ -69,12 +94,50 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回
 uint8_t Report_stage(void)
 {
     return RxFlag_1;
-
 }
-
-
-
-float Get_Data(void)
+//float Get_Data(uint8_t *pData)
+//{
+//    uint8 i;
+//	uint8 data_Start_Num = 0; // 记录数据位开始的地方
+//    uint8 data_End_Num = 0; // 记录数据位结束的地方
+//    uint8 data_Num = 0; // 记录数据位数
+//    uint8 minus_Flag = 0; // 判断是不是负数
+//    float data_return = 0; // 解析得到的数据
+//    
+//	for(i=0;i<15;i++) // 查找等号和感叹号的位置
+//    {
+//        if(pData[i] == '=') data_Start_Num = i + 1; // +1是直接定位到数据起始位
+//        if(pData[i] == '!')
+//        {
+//            data_End_Num = i - 1;
+//            break;
+//        }
+//    }
+//    if(pData[data_Start_Num] == '-') // 如果是负数
+//    {
+//        data_Start_Num += 1; // 后移一位到数据位
+//        minus_Flag = 1; // 负数flag
+//    }
+//    data_Num = data_End_Num - data_Start_Num + 1;
+//    if(data_Num == 4) // 数据共4位   		0.00 小数点算一位
+//    {
+//        data_return = (pData[data_Start_Num]-48)  + (pData[data_Start_Num+2]-48)*0.1f +
+//                (pData[data_Start_Num+3]-48)*0.01f;
+//    }
+//    else if(data_Num == 5) // 数据共5位  10.00
+//    {
+//        data_return = (pData[data_Start_Num]-48)*10 + (pData[data_Start_Num+1]-48) + (pData[data_Start_Num+3]-48)*0.1f +
+//                (pData[data_Start_Num+4]-48)*0.01f;
+//    }
+//    else if(data_Num == 6) // 数据共6位 100.00
+//    {
+//        data_return = (pData[data_Start_Num]-48)*100 + (pData[data_Start_Num+1]-48)*10 + (pData[data_Start_Num+2]-48) +
+//                (pData[data_Start_Num+4]-48)*0.1f + (pData[data_Start_Num+5]-48)*0.01f;
+//    }
+//    if(minus_Flag == 1)  data_return = -data_return;
+//    return data_return;
+//}
+float Get_Data(uint8_t *pData)
 {
     uint8 i;
 	uint8 data_Start_Num = 0; // 记录数据位开始的地方
@@ -82,17 +145,18 @@ float Get_Data(void)
     uint8 data_Num = 0; // 记录数据位数
     uint8 minus_Flag = 0; // 判断是不是负数
     float data_return = 0; // 解析得到的数据
-    
+    float last_data_return = 0; // 解析得到的数据
+    if (pData[0] != '=') return last_data_return;
 	for(i=0;i<15;i++) // 查找等号和感叹号的位置
     {
-        if(DataBuff[i] == '=') data_Start_Num = i + 1; // +1是直接定位到数据起始位
-        if(DataBuff[i] == '!')
+        if(pData[i] == '=') data_Start_Num = i + 1; // +1是直接定位到数据起始位
+        if(pData[i] == '!')
         {
             data_End_Num = i - 1;
             break;
         }
     }
-    if(DataBuff[data_Start_Num] == '-') // 如果是负数
+    if(pData[data_Start_Num] == '-') // 如果是负数
     {
         data_Start_Num += 1; // 后移一位到数据位
         minus_Flag = 1; // 负数flag
@@ -100,60 +164,61 @@ float Get_Data(void)
     data_Num = data_End_Num - data_Start_Num + 1;
     if(data_Num == 4) // 数据共4位   		0.00 小数点算一位
     {
-        data_return = (DataBuff[data_Start_Num]-48)  + (DataBuff[data_Start_Num+2]-48)*0.1f +
-                (DataBuff[data_Start_Num+3]-48)*0.01f;
+        data_return = (pData[data_Start_Num]-48)  + (pData[data_Start_Num+2]-48)*0.1f +
+                (pData[data_Start_Num+3]-48)*0.01f;
     }
     else if(data_Num == 5) // 数据共5位  10.00
     {
-        data_return = (DataBuff[data_Start_Num]-48)*10 + (DataBuff[data_Start_Num+1]-48) + (DataBuff[data_Start_Num+3]-48)*0.1f +
-                (DataBuff[data_Start_Num+4]-48)*0.01f;
+        data_return = (pData[data_Start_Num]-48)*10 + (pData[data_Start_Num+1]-48) + (pData[data_Start_Num+3]-48)*0.1f +
+                (pData[data_Start_Num+4]-48)*0.01f;
     }
     else if(data_Num == 6) // 数据共6位 100.00
     {
-        data_return = (DataBuff[data_Start_Num]-48)*100 + (DataBuff[data_Start_Num+1]-48)*10 + (DataBuff[data_Start_Num+2]-48) +
-                (DataBuff[data_Start_Num+4]-48)*0.1f + (DataBuff[data_Start_Num+5]-48)*0.01f;
+        data_return = (pData[data_Start_Num]-48)*100 + (pData[data_Start_Num+1]-48)*10 + (pData[data_Start_Num+2]-48) +
+                (pData[data_Start_Num+4]-48)*0.1f + (pData[data_Start_Num+5]-48)*0.01f;
     }
     if(minus_Flag == 1)  data_return = -data_return;
+    last_data_return=data_return;
     return data_return;
 }
 
 uint16_t dataship;
 uint8_t flage=0;
-void Vofa_PID_Adjust()
-{
-    float data_Get = Get_Data(); // 存放接收到的数据
-//	dataship=float_cov_uint16(data_Get);
-	if(DataBuff[0]=='A')
-    {
-//        if (flage==1){STOP_Motor();flage =0;}
-//        else {EN_Motor();flage =1;} 
-    } 
-    if(DataBuff[0]=='P') 
-	{
-		Store_Data[1]=dataship;
-//        PID_P_VOFA(&PIDM1,data_Get);
-//		vofa_test_1=func_limit_ab(vofa_test_1,-100,100);
-        }
-	else if(DataBuff[0]=='I' ) 
-	{
-		Store_Data[2]=dataship;
-//        PID_I_VOFA(&PIDM1,data_Get);
-//		vofa_test_2=func_limit_ab(vofa_test_2,-100,100);
-        }       
-    else if(DataBuff[0]=='D' ) 
-	{
-		Store_Data[3]=dataship;
-//        PID_D_VOFA(&PIDM1,data_Get);
-//		vofa_test_3=func_limit_ab(vofa_test_3,-100,100);
-        }
-	else if(DataBuff[0]=='S' ) 
-	{
-		Store_Data[4]=dataship;
-        //func_limit_ab(data_Get,-600,600);
-        ALLspeed=data_Get;
-    }	
-    Store_Save();
-}
+//void Vofa_PID_Adjust()
+//{
+//    float data_Get = Get_Data(); // 存放接收到的数据
+////	dataship=float_cov_uint16(data_Get);
+//	if(DataBuff[0]=='A')
+//    {
+////        if (flage==1){STOP_Motor();flage =0;}
+////        else {EN_Motor();flage =1;} 
+//    } 
+//    if(DataBuff[0]=='P') 
+//	{
+//		Store_Data[1]=dataship;
+////        PID_P_VOFA(&PIDM1,data_Get);
+////		vofa_test_1=func_limit_ab(vofa_test_1,-100,100);
+//        }
+//	else if(DataBuff[0]=='I' ) 
+//	{
+//		Store_Data[2]=dataship;
+////        PID_I_VOFA(&PIDM1,data_Get);
+////		vofa_test_2=func_limit_ab(vofa_test_2,-100,100);
+//        }       
+//    else if(DataBuff[0]=='D' ) 
+//	{
+//		Store_Data[3]=dataship;
+////        PID_D_VOFA(&PIDM1,data_Get);
+////		vofa_test_3=func_limit_ab(vofa_test_3,-100,100);
+//        }
+//	else if(DataBuff[0]=='S' ) 
+//	{
+//		Store_Data[4]=dataship;
+//        //func_limit_ab(data_Get,-600,600);
+//        ALLspeed=data_Get;
+//    }	
+//    Store_Save();
+//}
 
 unsigned char c0h[4],c1h[4],c2h[4],c3h[4],c4h[4],c5h[4],c6h[4],c7h[4],c8h[4],c9h[4],c10h[4],
                         c11h[4],c12h[4],c13h[4],c14h[4],c15h[4],c16h[4];
