@@ -4,6 +4,7 @@
 #include "SA_karman.h"
 #include "adc.h"
 #include "dma.h"
+#include "SA_Flash.h"
 volatile uint16_t ADC_buffer[1]={0};
 #define WINDOW_SIZE 100
 
@@ -18,12 +19,32 @@ void ADC_I_Init(Data_I_TypeDef *DATA,uint32_t total_count){
     DATA->max_value=0;
     DATA->avg_value=0;
     DATA->current_value=0;
-    DATA->Correct_parameters_k=0.8498;
-    DATA->Correct_parameters_b=28.0369;
+    if (flahs_flage == 1) 
+        {    
+   
+            DATA->Correct_parameters_k=0.849843;
+            DATA->Correct_parameters_b=28.0369;
+
+            Store_Data[1] = float_to_uint16_mem_high(DATA->Correct_parameters_k);
+            Store_Data[3] = float_to_uint16_mem_low(DATA->Correct_parameters_k);
+            Store_Data[5] = float_to_uint16_mem_high(DATA->Correct_parameters_b);
+            Store_Data[7] = float_to_uint16_mem_low(DATA->Correct_parameters_b);
+            Store_Save();
+       }
+    else {   
+       
+        DATA->Correct_parameters_k=uint16s_to_float(Store_Data[1],Store_Data[3]);
+        DATA->Correct_parameters_b=uint16s_to_float(Store_Data[5],Store_Data[7]);
+    }
+
     DATA->total_count=total_count;
     DATA->count=0;
     DATA->sum=0;
     DATA->current_value_filt=0;
+    
+    Info.parameters_k=DATA->Correct_parameters_k*10000;
+    Info.parameters_b=DATA->Correct_parameters_b*1000;
+
 }    
 
 void ADC_I_DATA(Data_I_TypeDef *DATA,uint8_t flage){
@@ -31,9 +52,17 @@ void ADC_I_DATA(Data_I_TypeDef *DATA,uint8_t flage){
     else if (flage==2) DATA->Correct_parameters_k-=0.01;
     else if (flage==3) DATA->Correct_parameters_b+=0.1;
     else if (flage==4) DATA->Correct_parameters_b-=0.1;
-    
+
+//    float_to_uint16(DATA->Correct_parameters_k,&Store_Data[0],&Store_Data[1]);  //浮点数存入uint16
+//    float_to_uint16(DATA->Correct_parameters_b,&Store_Data[2],&Store_Data[3]);  //浮点数存入uint16
+
+    Store_Data[1] = float_to_uint16_mem_high(DATA->Correct_parameters_k);
+    Store_Data[3] = float_to_uint16_mem_low(DATA->Correct_parameters_k);
+    Store_Data[5] = float_to_uint16_mem_high(DATA->Correct_parameters_b);
+    Store_Data[7] = float_to_uint16_mem_low(DATA->Correct_parameters_b);
+    Store_Save();
     Info.parameters_k=DATA->Correct_parameters_k*10000;
-    Info.parameters_b=DATA->Correct_parameters_b*10000;
+    Info.parameters_b=DATA->Correct_parameters_b*1000;
     
 }    
 float Get_I_Data(void){

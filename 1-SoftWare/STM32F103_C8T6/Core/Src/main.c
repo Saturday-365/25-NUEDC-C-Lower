@@ -110,6 +110,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 //  LCD_Init();
 //  LCD_Clear(WHITE);
+    Store_Init();
     Kalman_Init(&Curreny_Kalman,0.0001,0.01);
     ADC_I_Init(&Curreny_data,100);
     HAL_TIM_Base_Start_IT(&htim2);
@@ -143,6 +144,7 @@ int main(void)
     if(HMI_key_get_state(HMI_DOWN2)== HMI_KEY_PRESS)
   	{
     ADC_I_DATA(&Curreny_data,4);
+
 	HMI_key_clear_state(HMI_DOWN2);
     }
     

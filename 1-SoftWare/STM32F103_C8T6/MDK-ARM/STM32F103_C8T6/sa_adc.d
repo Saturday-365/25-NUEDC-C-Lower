@@ -37,3 +37,5 @@ stm32f103_c8t6\sa_adc.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdio.h
 stm32f103_c8t6\sa_adc.o: ..\Sourse_Library\1_SA_Library\SA_karman.h
 stm32f103_c8t6\sa_adc.o: ../Core/Inc/adc.h
 stm32f103_c8t6\sa_adc.o: ../Core/Inc/dma.h
+stm32f103_c8t6\sa_adc.o: ..\Sourse_Library\1_SA_Library\SA_Flash.h
+stm32f103_c8t6\sa_adc.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\string.h

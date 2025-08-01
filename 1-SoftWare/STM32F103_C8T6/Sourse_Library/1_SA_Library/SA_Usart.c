@@ -39,7 +39,7 @@ void RS232_Uart_Init(void)
 void HMI_Uart_DMA_RX_Init(void)
 {
     HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);
-//    HAL_UART_Receive_DMA(&huart3, (uint8_t *)RxBuffer_3,LENGTH);
+    HAL_UART_Receive_DMA(&huart3, (uint8_t *)RxBuffer_3,LENGTH);
 }
 
 
@@ -63,21 +63,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回
             HMI_key_scanner(HMI_data);
         }
         if (RxBuffer_1[0]=='%'&& RxBuffer_1[1]=='%'){
-//            if(RxBuffer_1[2]==0x00)  Info.aim_square_num=0;
-//            else if(RxBuffer_1[2]==0x01)  Info.aim_square_num=1;
-//            else if(RxBuffer_1[2]==0x02)  Info.aim_square_num=2;
-//            else if(RxBuffer_1[2]==0x03)  Info.aim_square_num=3;
-//            else if(RxBuffer_1[2]==0x04)  Info.aim_square_num=4;
-//            else if(RxBuffer_1[2]==0x05)  Info.aim_square_num=5;
-//            else if(RxBuffer_1[2]==0x06)  Info.aim_square_num=6;
-//            else if(RxBuffer_1[2]==0x07)  Info.aim_square_num=7;
-//            else if(RxBuffer_1[2]==0x08)  Info.aim_square_num=8;
-//            else if(RxBuffer_1[2]==0x09)  Info.aim_square_num=9;
-//            else Info.aim_square_num=2;
             Info.aim_square_num=RxBuffer_1[2];
         }
-
-//        HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0);  
         HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);//DMA使能接收中断  这个必须添加，否则不能再使用DMA进行发送接受
 	}
     else RxFlag_1=0;
