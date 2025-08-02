@@ -56,7 +56,7 @@ Kalman_Typedef Curreny_Kalman;
 extern uint8_t window_index;
 float a,b,c,d;
 extern float HMI_data;
-
+extern uint8_t RxFlag_3;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,8 +108,6 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-//  LCD_Init();
-//  LCD_Clear(WHITE);
     Store_Init();
     Kalman_Init(&Curreny_Kalman,0.0001,0.01);
     ADC_I_Init(&Curreny_data,100);
@@ -121,37 +119,50 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {      
-//	HMI_Send_EveryInfo(); 
-    HMI_Send_EveryInfo();
+  {       
 //    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.max_value);
-    JustFloat_4(Info.aim_square_num,b,c,d);
+//    JustFloat_4(Info.aim_square_num,b,c,d);
+    HMI_Send_EveryInfo();
     if(HMI_key_get_state(HMI_UP)== HMI_KEY_PRESS)
   	{
     ADC_I_DATA(&Curreny_data,1);
-	HMI_key_clear_state(HMI_UP);
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);
+    HMI_key_clear_state(HMI_UP);
     }
-    if(HMI_key_get_state(HMI_DOWN)== HMI_KEY_PRESS)
+    else if(HMI_key_get_state(HMI_DOWN)== HMI_KEY_PRESS)
   	{
     ADC_I_DATA(&Curreny_data,2);
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);
 	HMI_key_clear_state(HMI_DOWN);
     }
-    if(HMI_key_get_state(HMI_UP2)== HMI_KEY_PRESS)
+    else if(HMI_key_get_state(HMI_UP2)== HMI_KEY_PRESS)
   	{
     ADC_I_DATA(&Curreny_data,3);
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);
 	HMI_key_clear_state(HMI_UP2);
     }
-    if(HMI_key_get_state(HMI_DOWN2)== HMI_KEY_PRESS)
+    else if(HMI_key_get_state(HMI_DOWN2)== HMI_KEY_PRESS)
   	{
     ADC_I_DATA(&Curreny_data,4);
-
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);
 	HMI_key_clear_state(HMI_DOWN2);
     }
+    else if(HMI_key_get_state(HMI_SA)== HMI_KEY_PRESS)
+  	{
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);
+    Store_Save();
+	HMI_key_clear_state(HMI_SA);
+    }
+    if (RxFlag_3==1){    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);}
     
-//    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0);  
-//    HAL_Delay(200);
     HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)1); 
-//    HAL_Delay(200);
+    HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -206,6 +217,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+int16_t t=0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     if(htim == &htim2)  //
    {
@@ -219,9 +231,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
    }
      if(htim == &htim3)  //
    {
-        Info.y_distance+=1;
-        Info.x_length+=1;
-        Info.square_num+=1;
+//       t++;
+//       if (t>=300) {
+//           t=0;  MX_USART1_UART_Init();
+//        }
+
+//       Info.y_distance+=1;
+//        Info.x_length+=1;
+//        Info.square_num+=1;
 //        key_scanner ();
     }  
 

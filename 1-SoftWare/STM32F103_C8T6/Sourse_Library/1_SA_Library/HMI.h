@@ -23,15 +23,16 @@ typedef struct {
   int parameters_b;
 } Info_t;
 
-#define HMI_KEY_LIST { HMI_BTN1,HMI_BTN2,HMI_UP,HMI_DOWN,HMI_UP2,HMI_DOWN2}
+#define HMI_KEY_LIST { HMI_STAR,HMI_UP,HMI_DOWN,HMI_UP2,HMI_DOWN2,HMI_SA,}
 #define HMI_key_num 6
 typedef enum {
-  HMI_BTN1,
-  HMI_BTN2,
+  HMI_STAR,
   HMI_UP,
   HMI_DOWN,  
   HMI_UP2,
   HMI_DOWN2,
+  HMI_SA,
+
 } HMI_key_index_enum; // 按键索引 对应上方定义的按键引脚个数 默认定义四个按键
 
 typedef enum {
@@ -47,8 +48,9 @@ void HMI_send_string(char *name, char *showdata);
 void HMI_send_number(char *name, int num);
 void HMI_send_float(char *name, float num);
 void HMI_VOFA(char *name, float num);
-void HMI_key_scanner(float data);
+void HMI_key_scanner(int HMI_key);
 HMI_key_state_enum HMI_key_get_state(HMI_key_index_enum key_n);
 void HMI_key_clear_state(HMI_key_index_enum key_n);
+void send_aim_num(int data);
 
 #endif /* __USART1_H */

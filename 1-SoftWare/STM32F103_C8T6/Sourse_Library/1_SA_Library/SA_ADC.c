@@ -60,7 +60,6 @@ void ADC_I_DATA(Data_I_TypeDef *DATA,uint8_t flage){
     Store_Data[3] = float_to_uint16_mem_low(DATA->Correct_parameters_k);
     Store_Data[5] = float_to_uint16_mem_high(DATA->Correct_parameters_b);
     Store_Data[7] = float_to_uint16_mem_low(DATA->Correct_parameters_b);
-    Store_Save();
     Info.parameters_k=DATA->Correct_parameters_k*10000;
     Info.parameters_b=DATA->Correct_parameters_b*1000;
     

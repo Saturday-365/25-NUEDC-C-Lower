@@ -15,11 +15,9 @@ uint8_t RxFlag_3 = 0;       //接收完成标志；0表示接受未完成，1表
 uint8 RxBuffer[1];//串口接收缓冲
 uint16 RxLine = 0;//指令长度
 uint8_t DataBuff[200];//指令内容
-
-//extern SpeedPID_Typedef PIDM1;
-float ALLspeed;
-
-
+int HMI_key[4];
+uint8_t point_rx_data1;
+uint8_t point_rx_data3;
 /*======================printf重定义=====================*/
 /*-----------------注意要Include"stdio.h"--------------*/
 int fputc(int ch, FILE *f)
@@ -30,6 +28,12 @@ int fputc(int ch, FILE *f)
 }
 /*-----------------注意打开USE MicroLIB-----------------*/
 
+//int fgetc(FILE *f) {
+//uint8_t ch;
+//HAL_UART_Receive(&huart3, &ch, 1, 2); // 接收数据
+//return ch;
+//}
+
 ////使能DMA接收中断
 void RS232_Uart_Init(void)
 {
@@ -38,8 +42,10 @@ void RS232_Uart_Init(void)
 }
 void HMI_Uart_DMA_RX_Init(void)
 {
-    HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);
-    HAL_UART_Receive_DMA(&huart3, (uint8_t *)RxBuffer_3,LENGTH);
+//    HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);
+    HAL_UART_Receive_IT(&huart1, &point_rx_data1, 1);	
+    HAL_UART_Receive_IT(&huart3, &point_rx_data3, 1);	
+//    HAL_UART_Receive_DMA(&huart3, (uint8_t *)RxBuffer_3,LENGTH);
 }
 
 
@@ -52,29 +58,111 @@ void VOFA_Uart_Init(void)
 //    ALLspeed=uint6_cov_float(Store_Data[4]);
 }
 float HMI_data=100;
+char rx_data;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回调函数
 {
 	if(huart->Instance == USART1)   //判断发生接收中断的串口
 	{
 		RxFlag_1=1;   //置为接收完成标志
-        if (RxBuffer_1[0]=='='){
-            HMI_data = Get_Data(RxBuffer_1); 
-            HMI_key_scanner(HMI_data);
-        }
-        if (RxBuffer_1[0]=='%'&& RxBuffer_1[1]=='%'){
-            Info.aim_square_num=RxBuffer_1[2];
-        }
-        HAL_UART_Receive_DMA(&huart1, (uint8_t *)RxBuffer_1,LENGTH);//DMA使能接收中断  这个必须添加，否则不能再使用DMA进行发送接受
+		static char point_rx_data_buffer1[64] = {0};  	// 接收缓冲区
+		static uint8_t point_rx_data_index1 = 0;    		// 缓冲区索引
+		static uint8_t point_index1 = 0;					// 坐标索引
+		// 存储接收数据
+		point_rx_data_buffer1[point_rx_data_index1] = point_rx_data1;
+		
+		// 非[]字符
+		if(point_rx_data_buffer1[point_rx_data_index1] != '[' && point_rx_data_buffer1[point_rx_data_index1] != ']' && point_rx_data_index1 != 0)
+			point_rx_data_index1++;	// 索引递增
+		// 检测第一个坐标字符串开始（[）
+        if (point_rx_data_buffer1[point_rx_data_index1] == '[' && point_rx_data_index1 == 0){
+			point_rx_data_index1++;	// 索引递增
+		}
+		// 检测第二个坐标字符串开始（[）
+		else if (point_rx_data_buffer1[point_rx_data_index1] == '[' && point_rx_data_index1 != 0){
+			// 前有 ，
+			if(point_rx_data_buffer1[point_rx_data_index1-1] == ','){
+				point_rx_data_index1++;	// 索引递增
+				point_index1 = 1;
+			}
+			// 前无 ，
+			else if(point_rx_data_buffer1[point_rx_data_index1-1] != ','){
+				// 重置
+				point_index1 = 0;
+				point_rx_data_index1 = 0;
+				point_rx_data_buffer1[point_rx_data_index1] = '[';
+				point_rx_data_index1++;
+			}
+		}
+		// 检测第一个坐标字符串结束（]）
+		if (point_rx_data_buffer1[point_rx_data_index1] == ']' && point_rx_data_index1 != 0 && point_index1 == 0){
+			point_rx_data_index1++;	// 索引递增
+		}
+		// 检测第二个坐标字符串结束（]）
+		else if (point_rx_data_buffer1[point_rx_data_index1] == ']' && point_rx_data_index1 != 0 && point_index1 == 1){
+//			HAL_UART_Transmit(&huart1, point_rx_data_buffer, sizeof(point_rx_data_buffer), 10);	// 串口回显
+			// 解析
+			sscanf(point_rx_data_buffer1, "[%d,%d],[%d,%d]", &HMI_key[0], &Info.aim_square_num, &HMI_key[2], &HMI_key[3]);
+			HMI_key_scanner(HMI_key[0]);
+			// 重置
+			point_index1 = 0;
+			point_rx_data_index1 = 0;
+			memset(point_rx_data_buffer1, 0, sizeof(point_rx_data_buffer1));
+		}    
+		HAL_UART_Receive_IT(&huart1, &point_rx_data1, 1);	// 启动上位机信息接收中断
 	}
     else RxFlag_1=0;
     
-    if(huart->Instance == USART3)   //判断发生接收中断的串口
-	{
-		   
-        RxFlag_3=1;    //置为接收完成标志    
-  //      HAL_UART_Receive_DMA(&huart3, (uint8_t *)RxBuffer_3,LENGTH);//DMA使能接收中断  这个必须添加，否则不能再使用DMA进行发送接受
+
+    // 上位机数据接收解析
+	if(huart->Instance == USART3){
+		static char point_rx_data_buffer[64] = {0};  	// 接收缓冲区
+		static uint8_t point_rx_data_index = 0;    		// 缓冲区索引
+		static uint8_t point_index = 0;					// 坐标索引
+		// 存储接收数据
+		point_rx_data_buffer[point_rx_data_index] = point_rx_data3;
+		
+		// 非[]字符
+		if(point_rx_data_buffer[point_rx_data_index] != '[' && point_rx_data_buffer[point_rx_data_index] != ']' && point_rx_data_index != 0)
+			point_rx_data_index++;	// 索引递增
+		// 检测第一个坐标字符串开始（[）
+        if (point_rx_data_buffer[point_rx_data_index] == '[' && point_rx_data_index == 0){
+			point_rx_data_index++;	// 索引递增
+		}
+		// 检测第二个坐标字符串开始（[）
+		else if (point_rx_data_buffer[point_rx_data_index] == '[' && point_rx_data_index != 0){
+			// 前有 ，
+			if(point_rx_data_buffer[point_rx_data_index-1] == ','){
+				point_rx_data_index++;	// 索引递增
+				point_index = 1;
+			}
+			// 前无 ，
+			else if(point_rx_data_buffer[point_rx_data_index-1] != ','){
+				// 重置
+				point_index = 0;
+				point_rx_data_index = 0;
+				point_rx_data_buffer[point_rx_data_index] = '[';
+				point_rx_data_index++;
+			}
+		}
+		// 检测第一个坐标字符串结束（]）
+		if (point_rx_data_buffer[point_rx_data_index] == ']' && point_rx_data_index != 0 && point_index == 0){
+			point_rx_data_index++;	// 索引递增
+		}
+		// 检测第二个坐标字符串结束（]）
+		else if (point_rx_data_buffer[point_rx_data_index] == ']' && point_rx_data_index != 0 && point_index == 1){
+//			HAL_UART_Transmit(&huart1, point_rx_data_buffer, sizeof(point_rx_data_buffer), 10);	// 串口回显
+			// 解析
+			sscanf(point_rx_data_buffer, "[%d,%d],[%d,%d]", &Info.x_length, &Info.y_distance, &Info.x_length, &Info.y_distance);
+			
+			// 重置
+			point_index = 0;
+			point_rx_data_index = 0;
+			memset(point_rx_data_buffer, 0, sizeof(point_rx_data_buffer));
+		}
+		HAL_UART_Receive_IT(&huart3, &point_rx_data3, 1);	// 启动上位机信息接收中断
 	}
+    
     else RxFlag_3=0;
 }
 
@@ -82,6 +170,54 @@ uint8_t Report_stage(void)
 {
     return RxFlag_1;
 }
+
+uint8_t point_rx_data_index=0;
+uint8_t point_index=0;
+void Get_MXC_Data(uint8_t *point_rx_data_buffer)
+{
+//// 非[]字符
+//		if(point_rx_data_buffer[point_rx_data_index] != '[' && point_rx_data_buffer[point_rx_data_index] != ']' && point_rx_data_index != 0)
+//			point_rx_data_index++;	// 索引递增
+//		// 检测第一个坐标字符串开始（[）
+//        if (point_rx_data_buffer[point_rx_data_index] == '[' && point_rx_data_index == 0){
+//			point_rx_data_index++;	// 索引递增
+//		}
+//		// 检测第二个坐标字符串开始（[）
+//		else if (point_rx_data_buffer[point_rx_data_index] == '[' && point_rx_data_index != 0){
+//			// 前有 ，
+//			if(point_rx_data_buffer[point_rx_data_index-1] == ','){
+//				point_rx_data_index++;	// 索引递增
+//				point_index = 1;
+//			}
+//			// 前无 ，
+//			else if(point_rx_data_buffer[point_rx_data_index-1] != ','){
+//				// 重置
+//				point_index = 0;
+//				point_rx_data_index = 0;
+//				point_rx_data_buffer[point_rx_data_index] = '[';
+//				point_rx_data_index++;
+//			}
+//		}
+//		// 检测第一个坐标字符串结束（]）
+//		if (point_rx_data_buffer[point_rx_data_index] == ']' && point_rx_data_index != 0 && point_index == 0){
+//			point_rx_data_index++;	// 索引递增
+//		}
+//		// 检测第二个坐标字符串结束（]）
+//		else if (point_rx_data_buffer[point_rx_data_index] == ']' && point_rx_data_index != 0 && point_index == 1){
+////			HAL_UART_Transmit(&huart1, point_rx_data_buffer, sizeof(point_rx_data_buffer), 10);	// 串口回显
+//			// 解析
+//			sscanf(&point_rx_data_buffer, "!%d;%d;%d",&Info.aim_square_num,&Info.x_length,&Info.y_distance);
+			
+			// 重置
+//			point_index = 0;
+//			point_rx_data_index = 0;
+//			memset(point_rx_data_buffer, 0, sizeof(point_rx_data_buffer));
+		}
+
+
+
+
+
 //float Get_Data(uint8_t *pData)
 //{
 //    uint8 i;

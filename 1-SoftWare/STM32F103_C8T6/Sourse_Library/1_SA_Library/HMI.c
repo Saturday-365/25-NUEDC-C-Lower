@@ -1,5 +1,6 @@
 #include "HMI.h"
 #include "SA_Usart.h"
+#include "usart.h"
 #include "main.h" // Device header
 
 static HMI_key_index_enum       HMI_key_index[HMI_key_num] = HMI_KEY_LIST;
@@ -57,6 +58,27 @@ void HMI_Send_EveryInfo(void) {
   HMI_send_number("num_b.val", Info.parameters_b);
   HMI_send_number("aim_squre_num.val",Info.aim_square_num);  
   HMI_VOFA("vofa", Info.current_rlt/10);
+  send_aim_num(Info.aim_square_num);
+
+    
+    
+
+}
+uint8_t num[11]={0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x11};
+void send_aim_num(int data) {
+if (data==0)        HAL_UART_Transmit(&huart3, &num[0], 1, 2);
+else if (data==1)   HAL_UART_Transmit(&huart3, &num[1], 1, 2);
+else if (data==2)   HAL_UART_Transmit(&huart3, &num[2], 1, 2);
+else if (data==3)   HAL_UART_Transmit(&huart3, &num[3], 1, 2);
+else if (data==4)   HAL_UART_Transmit(&huart3, &num[4], 1, 2);
+else if (data==5)   HAL_UART_Transmit(&huart3, &num[5], 1, 2);
+else if (data==6)   HAL_UART_Transmit(&huart3, &num[6], 1, 2);
+else if (data==7)   HAL_UART_Transmit(&huart3, &num[7], 1, 2);
+else if (data==8)   HAL_UART_Transmit(&huart3, &num[8], 1, 2);
+else if (data==9)   HAL_UART_Transmit(&huart3, &num[9], 1, 2);
+else if (data==11)  HAL_UART_Transmit(&huart3, &num[10], 1, 2);
+
+
 }
 
 void HMI_send_string(char *name, char *showdata) {
@@ -77,14 +99,14 @@ void HMI_GOtoPage(char *name) {
 }
 
 
-void HMI_key_scanner(float data)
+void HMI_key_scanner(int HMI_key)
 {
-    if(data==123) HMI_key_state[0] =HMI_KEY_PRESS;  
-    else if(data==234) HMI_key_state[1] =HMI_KEY_PRESS;        
-    else if(data==345) HMI_key_state[2] =HMI_KEY_PRESS;        
-    else if(data==456) HMI_key_state[3] =HMI_KEY_PRESS;        
-    else if(data==567) HMI_key_state[4] =HMI_KEY_PRESS;  
-    else if(data==678) HMI_key_state[5] =HMI_KEY_PRESS;           
+    if(HMI_key==0) HMI_key_state[0] =HMI_KEY_PRESS;  
+    else if(HMI_key==1) HMI_key_state[1] =HMI_KEY_PRESS;        
+    else if(HMI_key==2) HMI_key_state[2] =HMI_KEY_PRESS;        
+    else if(HMI_key==3) HMI_key_state[3] =HMI_KEY_PRESS;        
+    else if(HMI_key==4) HMI_key_state[4] =HMI_KEY_PRESS;  
+    else if(HMI_key==5) HMI_key_state[5] =HMI_KEY_PRESS;
 }
 
 
