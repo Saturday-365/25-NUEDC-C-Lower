@@ -7,6 +7,7 @@
 typedef struct {
   int y_distance;              // 目标物距离（mm）
   int x_length;                // 几何图形尺寸（边长或者直径）（mm）
+  int square_area;
   int square_num;
   int square_length_min;       // 最小正方形边长（mm）
   int aim_square_num;          // 目标正方形编号
@@ -23,8 +24,8 @@ typedef struct {
   int parameters_b;
 } Info_t;
 
-#define HMI_KEY_LIST { HMI_STAR,HMI_UP,HMI_DOWN,HMI_UP2,HMI_DOWN2,HMI_SA,}
-#define HMI_key_num 6
+#define HMI_KEY_LIST { HMI_STAR,HMI_UP,HMI_DOWN,HMI_UP2,HMI_DOWN2,HMI_SA,HMI_STOP}
+#define HMI_key_num 7
 typedef enum {
   HMI_STAR,
   HMI_UP,
@@ -32,6 +33,7 @@ typedef enum {
   HMI_UP2,
   HMI_DOWN2,
   HMI_SA,
+  HMI_STOP,
 
 } HMI_key_index_enum; // 按键索引 对应上方定义的按键引脚个数 默认定义四个按键
 

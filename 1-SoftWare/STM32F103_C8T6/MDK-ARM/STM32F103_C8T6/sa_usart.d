@@ -39,3 +39,4 @@ stm32f103_c8t6\sa_usart.o: ..\Sourse_Library\1_SA_Library\SA_Flash.h
 stm32f103_c8t6\sa_usart.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\string.h
 stm32f103_c8t6\sa_usart.o: ../Sourse_Library/3_SA_Starup/common.h
 stm32f103_c8t6\sa_usart.o: ..\Sourse_Library\1_SA_Library\HMI.h
+stm32f103_c8t6\sa_usart.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdarg.h

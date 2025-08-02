@@ -6,6 +6,7 @@
 #include "SA_Flash.h"
 #include "common.h"
 #include "HMI.h"
+#include <stdarg.h>
 uint8_t	RxBuffer_1[LENGTH];   //接受缓冲区 
 uint8_t RxFlag_1 = 0;       //接收完成标志；0表示接受未完成，1表示接收完成
 uint8_t	RxBuffer_3[LENGTH];   //接受缓冲区 
@@ -25,6 +26,34 @@ int fputc(int ch, FILE *f)
  uint8_t temp[1] = {ch};
  HAL_UART_Transmit(&huart1, temp, 1, 2);
  return ch;
+}
+/**
+  * 函    数：自己封装的prinf函数
+  * 参    数：format 格式化字符串
+  * 参    数：... 可变的参数列表
+  * 返 回 值：无
+  */
+void Serial_Printf(char *format, ...)
+{
+	char String[100];				//定义字符数组
+	va_list arg;					//定义可变参数列表数据类型的变量arg
+	va_start(arg, format);			//从format开始，接收参数列表到arg变量
+	vsprintf(String, format, arg);	//使用vsprintf打印格式化字符串和参数列表到字符数组中
+	va_end(arg);					//结束变量arg
+	Serial_SendString(String);		//串口发送字符数组（字符串）
+}
+/**
+  * 函    数：串口发送一个字符串
+  * 参    数：String 要发送字符串的首地址
+  * 返 回 值：无
+  */
+void Serial_SendString(char *String)
+{
+	uint8_t i;
+	for (i = 0; String[i] != '\0'; i ++)//遍历字符数组（字符串），遇到字符串结束标志位后停止
+	{
+		HAL_UART_Transmit(&huart3,&String[i],1,2);		//依次调用Serial_SendByte发送每个字节数据
+	}
 }
 /*-----------------注意打开USE MicroLIB-----------------*/
 
@@ -102,9 +131,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回
 		else if (point_rx_data_buffer1[point_rx_data_index1] == ']' && point_rx_data_index1 != 0 && point_index1 == 1){
 //			HAL_UART_Transmit(&huart1, point_rx_data_buffer, sizeof(point_rx_data_buffer), 10);	// 串口回显
 			// 解析
-			sscanf(point_rx_data_buffer1, "[%d,%d],[%d,%d]", &HMI_key[0], &Info.aim_square_num, &HMI_key[2], &HMI_key[3]);
-			HMI_key_scanner(HMI_key[0]);
-			// 重置
+			sscanf(point_rx_data_buffer1, "[%d,%d],[%d,%d]", &HMI_key[0], &HMI_key[1], &HMI_key[2], &HMI_key[3]);
+			
+            if (HMI_key[2]==99) HMI_key_scanner(HMI_key[0]);
+			if(HMI_key[3]==99)  Info.aim_square_num=HMI_key[1];
+            
+            // 重置
 			point_index1 = 0;
 			point_rx_data_index1 = 0;
 			memset(point_rx_data_buffer1, 0, sizeof(point_rx_data_buffer1));
@@ -153,8 +185,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回
 		else if (point_rx_data_buffer[point_rx_data_index] == ']' && point_rx_data_index != 0 && point_index == 1){
 //			HAL_UART_Transmit(&huart1, point_rx_data_buffer, sizeof(point_rx_data_buffer), 10);	// 串口回显
 			// 解析
-			sscanf(point_rx_data_buffer, "[%d,%d],[%d,%d]", &Info.x_length, &Info.y_distance, &Info.x_length, &Info.y_distance);
-			
+			int ccc,ddd;
+            sscanf(point_rx_data_buffer, "[%d,%d],[%d,%d]",&Info.y_distance,&ccc, &Info.x_length, &Info.square_area);
+			//距离 形状 边长 面积
 			// 重置
 			point_index = 0;
 			point_rx_data_index = 0;

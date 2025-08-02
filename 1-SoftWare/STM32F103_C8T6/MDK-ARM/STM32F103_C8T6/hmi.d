@@ -35,3 +35,4 @@ stm32f103_c8t6\hmi.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 stm32f103_c8t6\hmi.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\stdio.h
 stm32f103_c8t6\hmi.o: ..\Sourse_Library\1_SA_Library\SA_Usart.h
 stm32f103_c8t6\hmi.o: ../Core/Inc/usart.h
+stm32f103_c8t6\hmi.o: C:\KEIL_V5\ARM\ARMCC\Bin\..\include\string.h

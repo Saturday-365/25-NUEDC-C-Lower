@@ -110,7 +110,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
     Store_Init();
     Kalman_Init(&Curreny_Kalman,0.0001,0.01);
-    ADC_I_Init(&Curreny_data,100);
+    ADC_I_Init(&Curreny_data,20);
     HAL_TIM_Base_Start_IT(&htim2);
     HAL_TIM_Base_Start_IT(&htim3);
     HMI_Uart_DMA_RX_Init();
@@ -123,7 +123,7 @@ int main(void)
 //    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.max_value);
 //    JustFloat_4(Info.aim_square_num,b,c,d);
     HMI_Send_EveryInfo();
-    if(HMI_key_get_state(HMI_UP)== HMI_KEY_PRESS)
+     if(HMI_key_get_state(HMI_UP)== HMI_KEY_PRESS)
   	{
     ADC_I_DATA(&Curreny_data,1);
     HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
@@ -162,7 +162,7 @@ int main(void)
 	HAL_Delay(100);}
     
     HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)1); 
-    HAL_Delay(100);
+    HAL_Delay(400);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -235,6 +235,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 //       if (t>=300) {
 //           t=0;  MX_USART1_UART_Init();
 //        }
+        send_aim_num(Info.aim_square_num);
 
 //       Info.y_distance+=1;
 //        Info.x_length+=1;

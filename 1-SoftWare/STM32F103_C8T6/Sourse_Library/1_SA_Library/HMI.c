@@ -2,14 +2,15 @@
 #include "SA_Usart.h"
 #include "usart.h"
 #include "main.h" // Device header
-
-static HMI_key_index_enum       HMI_key_index[HMI_key_num] = HMI_KEY_LIST;
+#include "string.h"
+;static HMI_key_index_enum       HMI_key_index[HMI_key_num] = HMI_KEY_LIST;
 static HMI_key_state_enum       HMI_key_state[HMI_key_num];                              // 按键状态
 
 Info_t Info = {
                .y_distance = 0,
                .x_length = 0,
                .square_num  = 0,
+                .square_area=0,
 
                .square_length_min = 0,
                .aim_square_num = 2,
@@ -40,7 +41,7 @@ Info.Length I 供电电流				-->		"Num_I.val"
 **************************************************************************/
 void HMI_Send_EveryInfo(void) {
   /* D 目标物距离 */
-  HMI_send_number("y_distance.val", Info.y_distance);
+  HMI_send_number("y_distance.val", (int)Info.y_distance);
   /* X 几何图形尺寸 */
   HMI_send_number("x_length.val", Info.x_length);
   /* N 正方形编号 */
@@ -54,31 +55,21 @@ void HMI_Send_EveryInfo(void) {
   /* PM 最大功率 */  
   HMI_send_number("power_max.val", Info.power_max);
   /* 电流显示波形 */
+  HMI_VOFA("vofa", Info.current_rlt/10);
+  HMI_send_number("square_area.val", Info.square_area);
+    
   HMI_send_number("num_k.val", Info.parameters_k);
   HMI_send_number("num_b.val", Info.parameters_b);
   HMI_send_number("aim_squre_num.val",Info.aim_square_num);  
-  HMI_VOFA("vofa", Info.current_rlt/10);
-  send_aim_num(Info.aim_square_num);
 
     
     
 
 }
-uint8_t num[11]={0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x11};
+//uint8_t num[11]={'0','1','2','3','4','5','6','7','8','9',"10"};
+//char num16="10";
 void send_aim_num(int data) {
-if (data==0)        HAL_UART_Transmit(&huart3, &num[0], 1, 2);
-else if (data==1)   HAL_UART_Transmit(&huart3, &num[1], 1, 2);
-else if (data==2)   HAL_UART_Transmit(&huart3, &num[2], 1, 2);
-else if (data==3)   HAL_UART_Transmit(&huart3, &num[3], 1, 2);
-else if (data==4)   HAL_UART_Transmit(&huart3, &num[4], 1, 2);
-else if (data==5)   HAL_UART_Transmit(&huart3, &num[5], 1, 2);
-else if (data==6)   HAL_UART_Transmit(&huart3, &num[6], 1, 2);
-else if (data==7)   HAL_UART_Transmit(&huart3, &num[7], 1, 2);
-else if (data==8)   HAL_UART_Transmit(&huart3, &num[8], 1, 2);
-else if (data==9)   HAL_UART_Transmit(&huart3, &num[9], 1, 2);
-else if (data==11)  HAL_UART_Transmit(&huart3, &num[10], 1, 2);
-
-
+    Serial_Printf("%d",data);
 }
 
 void HMI_send_string(char *name, char *showdata) {
@@ -93,12 +84,9 @@ void HMI_send_float(char *name, float num) {
 void HMI_VOFA(char *name, float num) {
   printf("add %s.id,0,%d\xff\xff\xff", name, (int)(num));
 }
-
 void HMI_GOtoPage(char *name) { 
-    printf("page %s\xff\xff\xff", name); 
+  printf("page %s\xff\xff\xff", name); 
 }
-
-
 void HMI_key_scanner(int HMI_key)
 {
     if(HMI_key==0) HMI_key_state[0] =HMI_KEY_PRESS;  
@@ -107,6 +95,8 @@ void HMI_key_scanner(int HMI_key)
     else if(HMI_key==3) HMI_key_state[3] =HMI_KEY_PRESS;        
     else if(HMI_key==4) HMI_key_state[4] =HMI_KEY_PRESS;  
     else if(HMI_key==5) HMI_key_state[5] =HMI_KEY_PRESS;
+    else if(HMI_key==6) HMI_key_state[6] =HMI_KEY_PRESS;
+
 }
 
 

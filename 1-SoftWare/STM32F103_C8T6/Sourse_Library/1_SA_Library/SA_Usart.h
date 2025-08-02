@@ -1,6 +1,7 @@
 #ifndef __SA_USART_H
 #define __SA_USART_H
 #include "main.h"
+
  #define LENGTH 10     //接受缓冲区大小
  
 float Get_Data(uint8_t *pData);
@@ -18,5 +19,7 @@ void JustFloat_10_rs232(float data1,float data2,float data3,float data4,float da
     float data9,float data10);
 void JustFloat_10(float data1,float data2,float data3,float data4,float data5,float data6,float data7,float data8,
     float data9,float data10);
+void Serial_SendString(char *String);
+void Serial_Printf(char *format, ...);
 
 #endif
