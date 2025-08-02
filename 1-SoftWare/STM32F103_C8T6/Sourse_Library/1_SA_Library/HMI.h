@@ -44,7 +44,9 @@ typedef enum {
 
 /* 声明全局变量（extern表示变量在其他文件中定义） */
 extern Info_t Info;
+extern uint8_t usart3_flage;
 
+void clear_info(void);
 void HMI_Send_EveryInfo(void);
 void HMI_send_string(char *name, char *showdata);
 void HMI_send_number(char *name, int num);

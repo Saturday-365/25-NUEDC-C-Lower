@@ -110,10 +110,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
     Store_Init();
     Kalman_Init(&Curreny_Kalman,0.0001,0.01);
-    ADC_I_Init(&Curreny_data,20);
+    ADC_I_Init(&Curreny_data,5);
     HAL_TIM_Base_Start_IT(&htim2);
     HAL_TIM_Base_Start_IT(&htim3);
     HMI_Uart_DMA_RX_Init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -123,7 +124,24 @@ int main(void)
 //    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.max_value);
 //    JustFloat_4(Info.aim_square_num,b,c,d);
     HMI_Send_EveryInfo();
-     if(HMI_key_get_state(HMI_UP)== HMI_KEY_PRESS)
+     if(HMI_key_get_state(HMI_STAR)== HMI_KEY_PRESS)
+  	{
+    usart3_flage=1;
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);
+    HMI_key_clear_state(HMI_STAR);
+    }
+    else  if(HMI_key_get_state(HMI_STOP)== HMI_KEY_PRESS)
+  	{
+    usart3_flage=0;
+	HAL_Delay(10);
+    clear_info();
+    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);
+    HMI_key_clear_state(HMI_STOP);
+    }
+
+    else if(HMI_key_get_state(HMI_UP)== HMI_KEY_PRESS)
   	{
     ADC_I_DATA(&Curreny_data,1);
     HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
@@ -162,7 +180,7 @@ int main(void)
 	HAL_Delay(100);}
     
     HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)1); 
-    HAL_Delay(400);
+    HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

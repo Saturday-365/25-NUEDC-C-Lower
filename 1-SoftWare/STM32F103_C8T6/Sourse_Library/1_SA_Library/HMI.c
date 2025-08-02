@@ -13,7 +13,7 @@ Info_t Info = {
                 .square_area=0,
 
                .square_length_min = 0,
-               .aim_square_num = 2,
+               .aim_square_num = 10,
                .tar_square_num = 0,
 
                .current_rlt = 0,
@@ -56,22 +56,43 @@ void HMI_Send_EveryInfo(void) {
   HMI_send_number("power_max.val", Info.power_max);
   /* 电流显示波形 */
   HMI_VOFA("vofa", Info.current_rlt/10);
-  HMI_send_number("square_area.val", Info.square_area);
+  HMI_send_number("square_area.val", Info.square_area/100);
     
   HMI_send_number("num_k.val", Info.parameters_k);
   HMI_send_number("num_b.val", Info.parameters_b);
   HMI_send_number("aim_squre_num.val",Info.aim_square_num);  
 
-    
-    
-
 }
-//uint8_t num[11]={'0','1','2','3','4','5','6','7','8','9',"10"};
+
+void clear_info(void){
+       Info.y_distance = 0;
+       Info.x_length = 0;
+       Info.aim_square_num = 0;
+       Info.square_area=0;
+}
+
+uint8_t num[11]={0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a};
 //char num16="10";
+uint8_t usart3_flage=0;
+//void send_aim_num(int data) {
+//    if (usart3_flage==1) Serial_Printf("%d",data);
+//}
 void send_aim_num(int data) {
-    Serial_Printf("%d",data);
+    if (usart3_flage==1) 
+    {   
+        if(data==0) HAL_UART_Transmit(&huart3,&num[0],1,2);
+        else if(data==1) HAL_UART_Transmit(&huart3,&num[1],1,2);
+        else if(data==2) HAL_UART_Transmit(&huart3,&num[2],1,2);
+        else if(data==3) HAL_UART_Transmit(&huart3,&num[3],1,2);
+        else if(data==4) HAL_UART_Transmit(&huart3,&num[4],1,2);
+        else if(data==5)   HAL_UART_Transmit(&huart3,&num[5],1,2);
+        else if(data==6) HAL_UART_Transmit(&huart3,&num[6],1,2);
+        else if(data==7) HAL_UART_Transmit(&huart3,&num[7],1,2);
+        else if(data==8) HAL_UART_Transmit(&huart3,&num[8],1,2);
+        else if(data==9) HAL_UART_Transmit(&huart3,&num[9],1,2);
+        else if(data==10) HAL_UART_Transmit(&huart3,&num[10],1,2);
+    }
 }
-
 void HMI_send_string(char *name, char *showdata) {
   printf("%s=\"%s\"\xff\xff\xff", name, showdata);
 }

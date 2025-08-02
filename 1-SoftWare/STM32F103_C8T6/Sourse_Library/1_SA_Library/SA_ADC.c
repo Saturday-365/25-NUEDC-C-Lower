@@ -6,7 +6,7 @@
 #include "dma.h"
 #include "SA_Flash.h"
 volatile uint16_t ADC_buffer[1]={0};
-#define WINDOW_SIZE 100
+#define WINDOW_SIZE 20
 
 static float window_buffer[WINDOW_SIZE] = {0};  // 滑动窗口缓冲区
 uint8_t window_index = 0;     // 当前缓冲区索引
