@@ -6,6 +6,7 @@
 #include "SA_Flash.h"
 #include "common.h"
 #include "HMI.h"
+#include "SA_ADC.h"
 #include <stdarg.h>
 uint8_t	RxBuffer_1[LENGTH];   //接受缓冲区 
 uint8_t RxFlag_1 = 0;       //接收完成标志；0表示接受未完成，1表示接收完成
@@ -19,6 +20,7 @@ uint8_t DataBuff[200];//指令内容
 int HMI_key[4];
 uint8_t point_rx_data1;
 uint8_t point_rx_data3;
+uint8_t modeFlag;
 /*======================printf重定义=====================*/
 /*-----------------注意要Include"stdio.h"--------------*/
 int fputc(int ch, FILE *f)
@@ -134,8 +136,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回
 			sscanf(point_rx_data_buffer1, "[%d,%d],[%d,%d]", &HMI_key[0], &HMI_key[1], &HMI_key[2], &HMI_key[3]);
 			
             if (HMI_key[2]==99) HMI_key_scanner(HMI_key[0]);
-			if(HMI_key[3]==99)  Info.aim_square_num=HMI_key[1];
-            
+            else if(HMI_key[3]==99)  Info.aim_square_num   =HMI_key[1];
+            else if(HMI_key[2]==88)  {modeFlag=1;INA240MODE_change(&Curreny_data); }
             // 重置
 			point_index1 = 0;
 			point_rx_data_index1 = 0;
@@ -185,7 +187,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)  //串口接收中断回
 		else if (point_rx_data_buffer[point_rx_data_index] == ']' && point_rx_data_index != 0 && point_index == 1){
 //			HAL_UART_Transmit(&huart1, point_rx_data_buffer, sizeof(point_rx_data_buffer), 10);	// 串口回显
 			// 解析
-			int ccc,ddd;
+			int ccc;
             sscanf(point_rx_data_buffer, "[%d,%d],[%d,%d]",&Info.y_distance,&ccc, &Info.x_length, &Info.square_area);
 			//距离 形状 边长 面积
 			// 重置

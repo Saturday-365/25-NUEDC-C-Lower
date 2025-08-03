@@ -51,12 +51,12 @@
 float I_Data=0;
 
 float I_Data_Ratio=0;
-Data_I_TypeDef Curreny_data;
 Kalman_Typedef Curreny_Kalman;
 extern uint8_t window_index;
 float a,b,c,d;
 extern float HMI_data;
 extern uint8_t RxFlag_3;
+extern uint8_t modeFlag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -121,7 +121,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {       
-//    JustFloat_4(Curreny_data.current_value,Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.max_value);
+    JustFloat_4(Curreny_data.current_value_filt,Curreny_data.avg_value,Curreny_data.sum,Curreny_data.max_value);
 //    JustFloat_4(Info.aim_square_num,b,c,d);
     HMI_Send_EveryInfo();
      if(HMI_key_get_state(HMI_STAR)== HMI_KEY_PRESS)
@@ -176,7 +176,9 @@ int main(void)
     }
     if (RxFlag_3==1){    HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
 	HAL_Delay(100);}
-    
+    if (modeFlag==1){    modeFlag=0;HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
+	HAL_Delay(100);modeFlag=0;}
+ 
     HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)1); 
     HAL_Delay(100);
     /* USER CODE END WHILE */
@@ -234,15 +236,16 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 int16_t t=0;
+//int16_t t=0;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
     if(htim == &htim2)  //
    {
    
    Collect_CurrentData(&Curreny_data);
-//   Info.current_rlt=(uint16_t)(Curreny_data.current_value_filt*1000);
    Info.current_rlt=(uint16_t)(Curreny_data.current_value_filt*1000);
-   Info.current_avg=(uint16_t)(Curreny_data.avg_value*1000);
-   Info.power_rlt=Info.current_avg*5;
+   Info.current_rlt=(int)(Curreny_data.current_value_filt*1000);
+   Info.current_avg=(int)(Curreny_data.avg_value*1000);
+   Info.power_rlt=(int)(Curreny_data.avg_value*5000);
    Info.power_max=Curreny_data.max_value*5000;
    }
      if(htim == &htim3)  //
@@ -252,7 +255,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 //           t=0;  MX_USART1_UART_Init();
 //        }
         send_aim_num(Info.aim_square_num);
-    if(usart3_flage==0) clear_info();
+        if(usart3_flage==0) clear_info();
 //       Info.y_distance+=1;
 //        Info.x_length+=1;
 //        Info.square_num+=1;

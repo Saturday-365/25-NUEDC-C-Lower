@@ -26,6 +26,7 @@ Info_t Info = {
     
     .parameters_k= 0,
     .parameters_b= 0,
+    .ina240=0,
 };
 /**************************************************************************
 函数简介    显示所有参数
@@ -54,6 +55,9 @@ void HMI_Send_EveryInfo(void) {
   HMI_send_number("power_rlt.val", Info.power_rlt);
   /* PM 最大功率 */  
   HMI_send_number("power_max.val", Info.power_max);
+    
+  HMI_send_number("ina240.val", Info.ina240);
+
   /* 电流显示波形 */
   HMI_VOFA("vofa", Info.current_rlt/10);
   HMI_send_number("square_area.val", Info.square_area/100);
@@ -67,7 +71,7 @@ void HMI_Send_EveryInfo(void) {
 void clear_info(void){
        Info.y_distance = 0;
        Info.x_length = 0;
-       Info.aim_square_num = 10;
+//       Info.aim_square_num = 10;
        Info.square_area=0;
 }
 
@@ -85,7 +89,7 @@ void send_aim_num(int data) {
         else if(data==2) HAL_UART_Transmit(&huart3,&num[2],1,2);
         else if(data==3) HAL_UART_Transmit(&huart3,&num[3],1,2);
         else if(data==4) HAL_UART_Transmit(&huart3,&num[4],1,2);
-        else if(data==5)   HAL_UART_Transmit(&huart3,&num[5],1,2);
+        else if(data==5) HAL_UART_Transmit(&huart3,&num[5],1,2);
         else if(data==6) HAL_UART_Transmit(&huart3,&num[6],1,2);
         else if(data==7) HAL_UART_Transmit(&huart3,&num[7],1,2);
         else if(data==8) HAL_UART_Transmit(&huart3,&num[8],1,2);

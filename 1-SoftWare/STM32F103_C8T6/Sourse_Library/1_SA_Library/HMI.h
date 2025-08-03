@@ -22,6 +22,8 @@ typedef struct {
   int power_max;               // 最大功耗（mW）
   int parameters_k;
   int parameters_b;
+  int ina240;
+
 } Info_t;
 
 #define HMI_KEY_LIST { HMI_STAR,HMI_UP,HMI_DOWN,HMI_UP2,HMI_DOWN2,HMI_SA,HMI_STOP}
