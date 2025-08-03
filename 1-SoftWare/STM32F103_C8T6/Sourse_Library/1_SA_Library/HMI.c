@@ -50,7 +50,7 @@ void HMI_Send_EveryInfo(void) {
   /* I 实时电流 */  
   HMI_send_number("current_rlt.val", Info.current_rlt);
   /* I 平均电流 */  
-  HMI_send_number("current_avg.val", Info.current_avg);
+  HMI_send_number("current_avg.val", Info.current_rlt);
   /* P 实时功率 */  
   HMI_send_number("power_rlt.val", Info.power_rlt);
   /* PM 最大功率 */  

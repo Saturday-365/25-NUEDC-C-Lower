@@ -242,10 +242,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
    {
    
    Collect_CurrentData(&Curreny_data);
-   Info.current_rlt=(uint16_t)(Curreny_data.current_value_filt*1000);
    Info.current_rlt=(int)(Curreny_data.current_value_filt*1000);
-   Info.current_avg=(int)(Curreny_data.avg_value*1000);
-   Info.power_rlt=(int)(Curreny_data.avg_value*5000);
+   Info.current_avg=(int)(Curreny_data.current_value_filt*1000);
+   Info.power_rlt=(int)(Curreny_data.current_value_filt*5000);
    Info.power_max=Curreny_data.max_value*5000;
    }
      if(htim == &htim3)  //
