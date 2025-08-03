@@ -134,8 +134,6 @@ int main(void)
     else  if(HMI_key_get_state(HMI_STOP)== HMI_KEY_PRESS)
   	{
     usart3_flage=0;
-	HAL_Delay(10);
-    clear_info();
     HAL_GPIO_WritePin((GPIO_TypeDef *)LED1_GPIO_Port, (uint16_t)LED1_Pin, (GPIO_PinState)0); 
 	HAL_Delay(100);
     HMI_key_clear_state(HMI_STOP);
@@ -254,7 +252,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 //           t=0;  MX_USART1_UART_Init();
 //        }
         send_aim_num(Info.aim_square_num);
-
+    if(usart3_flage==0) clear_info();
 //       Info.y_distance+=1;
 //        Info.x_length+=1;
 //        Info.square_num+=1;

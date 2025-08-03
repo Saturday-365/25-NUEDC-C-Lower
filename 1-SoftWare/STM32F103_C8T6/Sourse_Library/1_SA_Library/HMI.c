@@ -67,7 +67,7 @@ void HMI_Send_EveryInfo(void) {
 void clear_info(void){
        Info.y_distance = 0;
        Info.x_length = 0;
-       Info.aim_square_num = 0;
+       Info.aim_square_num = 10;
        Info.square_area=0;
 }
 
