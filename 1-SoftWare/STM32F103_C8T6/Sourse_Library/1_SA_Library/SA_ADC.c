@@ -59,8 +59,8 @@ extern Kalman_Typedef Curreny_Kalman;
 void ADC_I_DATA(Data_I_TypeDef *DATA,uint8_t flage){
     if (flage==1) DATA->Correct_parameters_k+=0.01;
     else if (flage==2) DATA->Correct_parameters_k-=0.01;
-    else if (flage==3) DATA->Correct_parameters_b+=0.1;
-    else if (flage==4) DATA->Correct_parameters_b-=0.1;
+    else if (flage==3) DATA->Correct_parameters_b+=1.0;
+    else if (flage==4) DATA->Correct_parameters_b-=1.0;
 
 //    float_to_uint16(DATA->Correct_parameters_k,&Store_Data[0],&Store_Data[1]);  //浮点数存入uint16
 //    float_to_uint16(DATA->Correct_parameters_b,&Store_Data[2],&Store_Data[3]);  //浮点数存入uint16
